@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Quran & What the Universe Already Knew</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Source+Sans+3:wght@200;300;400;500&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8cc80;
+  --gold-bright: #f4d76e;
+  --gold-dim: #7a6030;
+  --gold-faint: rgba(201, 168, 76, 0.15);
+  --bg: #050709;
+  --bg-2: #0a0e14;
+  --bg-3: #11161e;
+  --ink: #d4c9b5;
+  --ink-dim: #8a8273;
+  --ink-faint: #5a5448;
+  --white: #f0ead8;
+  --accent: #1a3a4a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  cursor: none;
+}
+
+@media (pointer: coarse) { html { cursor: auto; } }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 300;
+  line-height: 1.85;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* === FILM GRAIN OVERLAY === */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9000;
+  opacity: 0.18;
+  mix-blend-mode: overlay;
+}
+
+/* === CURSOR GLOW === */
+.cursor-glow {
+  position: fixed;
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 168, 76, 0.13) 0%, rgba(201, 168, 76, 0.05) 30%, transparent 60%);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  mix-blend-mode: screen;
+  transition: width 0.4s, height 0.4s;
+  will-change: transform;
+}
+.cursor-dot {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold-bright);
+  box-shadow: 0 0 12px var(--gold-bright);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  will-change: transform;
+}
+
+/* === SCROLL PROGRESS BAR === */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-bright));
+  z-index: 9998;
+  box-shadow: 0 0 10px var(--gold), 0 0 20px rgba(201, 168, 76, 0.4);
+  transition: width 0.05s linear;
+}
+
+/* === STICKY NAV === */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(5, 7, 9, 0.78);
+  backdrop-filter: blur(20px) saturate(120%);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.12);
+  padding: 1.1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transform: translateY(-100%);
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+nav.visible { transform: translateY(0); }
+
+.nav-mark {
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  font-weight: 500;
+}
+
+.nav-mark::before {
+  content: '✦';
+  margin-right: 0.6em;
+  color: var(--gold-bright);
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.nav-links a {
+  color: var(--ink-dim);
+  text-decoration: none;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  transition: color 0.4s;
+  font-family: 'Cinzel', serif;
+  font-weight: 400;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.4s;
+}
+.nav-links a:hover { color: var(--gold-bright); }
+.nav-links a:hover::after { transform: scaleX(1); }
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  color: var(--gold);
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+}
+
+/* === HERO === */
+.hero {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 1.5rem;
+  overflow: hidden;
+}
+
+#starfield {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.hero-bg-image {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 40%, rgba(201, 168, 76, 0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(26, 58, 74, 0.4) 0%, transparent 60%),
+    url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=2000&q=85') center/cover no-repeat;
+  filter: brightness(0.3) saturate(0.7) contrast(1.1);
+  z-index: 0;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center, transparent 30%, rgba(5, 7, 9, 0.7) 100%),
+    linear-gradient(180deg, transparent 60%, var(--bg) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+}
+
+/* Bismillah */
+.bismillah-wrap {
+  margin-bottom: 3rem;
+  opacity: 0;
+  animation: heroEnter 1.4s 0.4s forwards;
+}
+
+.bismillah-svg {
+  width: clamp(280px, 60vw, 540px);
+  height: auto;
+  display: block;
+  margin: 0 auto 0.6rem;
+}
+
+.bismillah-svg text {
+  font-family: 'Amiri', serif;
+  font-size: 48px;
+  fill: none;
+  stroke: var(--gold-bright);
+  stroke-width: 0.6;
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  animation: drawCalligraphy 4s 1s ease-out forwards;
+}
+
+@keyframes drawCalligraphy {
+  0% { stroke-dashoffset: 1200; fill: transparent; }
+  60% { stroke-dashoffset: 0; fill: transparent; }
+  100% { stroke-dashoffset: 0; fill: var(--gold); stroke-width: 0.3; }
+}
+
+.bismillah-translit {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.5em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+}
+
+.hero-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.55em;
+  color: var(--gold);
+  margin-bottom: 1.8rem;
+  opacity: 0;
+  animation: heroEnter 1.2s 1s forwards;
+  text-transform: uppercase;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: '';
+  display: inline-block;
+  width: 32px;
+  height: 1px;
+  background: var(--gold);
+  vertical-align: middle;
+  margin: 0 1em;
+  opacity: 0.7;
+}
+
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.4rem, 6.5vw, 5.2rem);
+  color: var(--white);
+  line-height: 1.05;
+  letter-spacing: -0.005em;
+  margin-bottom: 1.6rem;
+  font-weight: 300;
+  font-style: italic;
+  opacity: 0;
+  animation: heroEnter 1.4s 1.3s forwards;
+}
+.hero h1 .gold-word {
+  color: var(--gold);
+  font-style: normal;
+  font-family: 'Cinzel', serif;
+  font-weight: 500;
+  font-size: 0.85em;
+  letter-spacing: 0.04em;
+  display: inline-block;
+}
+
+.hero-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.05rem, 1.7vw, 1.25rem);
+  color: var(--ink-dim);
+  max-width: 580px;
+  margin: 0 auto 3rem;
+  opacity: 0;
+  animation: heroEnter 1.4s 1.7s forwards;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  line-height: 1.7;
+}
+
+.hero-divider {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(180deg, transparent, var(--gold), transparent);
+  margin: 0 auto 1rem;
+  opacity: 0;
+  animation: heroEnter 1.4s 2s forwards;
+}
+
+.hero-ornament {
+  color: var(--gold);
+  font-size: 0.9rem;
+  opacity: 0;
+  animation: heroEnter 1.4s 2.2s forwards;
+}
+
+.scroll-hint {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--gold-dim);
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  z-index: 2;
+  font-family: 'Cinzel', serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  opacity: 0;
+  animation: heroEnter 1s 2.5s forwards, pulse 2.4s 3s infinite;
+}
+
+.scroll-hint::after {
+  content: '';
+  width: 1px;
+  height: 30px;
+  background: linear-gradient(180deg, var(--gold), transparent);
+}
+
+@keyframes heroEnter {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+
+/* === SECTION ARCHITECTURE === */
+.section {
+  position: relative;
+  padding: 8rem 2rem 9rem;
+  overflow: hidden;
+}
+
+.section-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  will-change: transform;
+}
+
+.section-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, var(--bg) 0%, rgba(5, 7, 9, 0.88) 25%, rgba(5, 7, 9, 0.88) 75%, var(--bg) 100%);
+}
+
+.section-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(5, 7, 9, 0.6) 100%);
+  z-index: 1;
+}
+
+.section-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.5em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 1.6rem;
+  display: inline-block;
+  position: relative;
+  padding-left: 3.5em;
+}
+.section-label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 2.5em;
+  height: 1px;
+  background: var(--gold);
+}
+
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 4.5vw, 3.6rem);
+  color: var(--white);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin-bottom: 2rem;
+  font-weight: 400;
+}
+.section-title em {
+  color: var(--gold);
+  font-style: italic;
+  font-weight: 300;
+}
+.section-title .number {
+  font-family: 'Cinzel', serif;
+  font-size: 0.45em;
+  color: var(--gold-dim);
+  display: block;
+  letter-spacing: 0.3em;
+  margin-bottom: 0.6rem;
+  font-weight: 400;
+}
+
+.divider {
+  width: 80px;
+  height: 1px;
+  background: var(--gold);
+  margin: 0 0 2.5rem;
+  position: relative;
+}
+.divider::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 12px var(--gold);
+}
+
+.section p {
+  font-size: 1.05rem;
+  margin-bottom: 1.6rem;
+  color: var(--ink);
+  font-weight: 300;
+}
+
+.section p strong {
+  color: var(--gold-light);
+  font-weight: 500;
+}
+
+.section p em {
+  color: var(--gold);
+  font-style: italic;
+}
+
+/* Light-sweep section transitions */
+.section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 150%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+}
+.section.in-view::before {
+  animation: lightSweep 2.5s 0.2s ease-out forwards;
+}
+
+@keyframes lightSweep {
+  0% { left: -150%; opacity: 0; }
+  20% { opacity: 0.8; }
+  80% { opacity: 0.8; }
+  100% { left: 100%; opacity: 0; }
+}
+
+/* === VERSE CARDS === */
+.verse-card {
+  margin: 3rem 0;
+  padding: 2.8rem 2.5rem;
+  background: linear-gradient(135deg, rgba(13, 17, 23, 0.92), rgba(17, 22, 30, 0.85));
+  border-left: 2px solid var(--gold);
+  position: relative;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow:
+    0 30px 60px -20px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(201, 168, 76, 0.08);
+}
+
+.verse-card::before {
+  content: '"';
+  position: absolute;
+  top: 0.2rem;
+  left: 1rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 7rem;
+  color: var(--gold);
+  opacity: 0.12;
+  line-height: 1;
+}
+
+.verse-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60px;
+  height: 60px;
+  border-top: 1px solid var(--gold);
+  border-right: 1px solid var(--gold);
+  opacity: 0.4;
+}
+
+.verse-arabic {
+  font-family: 'Amiri', serif;
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  color: var(--gold-light);
+  direction: rtl;
+  text-align: right;
+  line-height: 2;
+  margin-bottom: 1.6rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+.verse-translation {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.25rem;
+  color: var(--white);
+  font-style: italic;
+  line-height: 1.7;
+  margin-bottom: 1.2rem;
+  font-weight: 400;
+}
+
+.verse-ref {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.35em;
+  color: var(--gold);
+  text-transform: uppercase;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(201, 168, 76, 0.2);
+  display: inline-block;
+  padding-right: 2rem;
+}
+
+/* === REVEAL ANIMATIONS === */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1.1s cubic-bezier(0.16, 1, 0.3, 1), transform 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+.reveal.delay-1 { transition-delay: 0.15s; }
+.reveal.delay-2 { transition-delay: 0.3s; }
+.reveal.delay-3 { transition-delay: 0.45s; }
+
+/* === EMBRYO STAGES === */
+.embryo-stages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1.5rem;
+  margin: 3rem 0;
+}
+
+.stage-card {
+  background: linear-gradient(180deg, rgba(13, 17, 23, 0.6), rgba(17, 22, 30, 0.3));
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  padding: 1.5rem 1rem;
+  text-align: center;
+  transition: all 0.4s;
+  position: relative;
+}
+.stage-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+}
+
+.stage-card svg {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 0.8rem;
+  display: block;
+  stroke: var(--gold);
+  fill: none;
+}
+
+.stage-arabic {
+  font-family: 'Amiri', serif;
+  color: var(--gold);
+  font-size: 1.3rem;
+  direction: rtl;
+  margin-bottom: 0.4rem;
+}
+
+.stage-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  color: var(--white);
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+
+.stage-meaning {
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+  font-style: italic;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* === SCHOLAR CARDS === */
+.scholar-card {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 2rem;
+  padding: 2.2rem 0;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.12);
+  align-items: start;
+}
+
+.scholar-num {
+  font-family: 'Cinzel', serif;
+  font-size: 1.6rem;
+  color: var(--gold);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  border-right: 1px solid rgba(201, 168, 76, 0.3);
+  padding-right: 1.5rem;
+  text-align: right;
+}
+
+.scholar-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  color: var(--white);
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+}
+
+.scholar-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.scholar-text {
+  font-size: 0.98rem;
+  color: var(--ink);
+  line-height: 1.85;
+}
+.scholar-text em { color: var(--gold-light); font-style: italic; }
+
+/* === LOGIC OPTIONS === */
+.logic-grid {
+  display: grid;
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.logic-card {
+  background: linear-gradient(135deg, rgba(13, 17, 23, 0.88), rgba(17, 22, 30, 0.7));
+  border: 1px solid rgba(201, 168, 76, 0.12);
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.logic-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+  transition: left 0.8s;
+}
+
+.logic-card:hover {
+  border-color: rgba(201, 168, 76, 0.4);
+  transform: translateY(-3px);
+}
+.logic-card:hover::before { left: 100%; }
+
+.logic-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4rem;
+  color: var(--gold);
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1;
+  position: absolute;
+  top: 2rem;
+  right: 2.5rem;
+  opacity: 0.4;
+}
+
+.logic-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.logic-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  color: var(--white);
+  margin-bottom: 1.2rem;
+  font-style: italic;
+  font-weight: 400;
+  max-width: 80%;
+}
+
+.logic-verdict {
+  display: inline-block;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  font-family: 'Cinzel', serif;
+  margin-bottom: 1.2rem;
+  border: 1px solid;
+}
+
+.verdict-weak { color: #b85a4a; border-color: rgba(184, 90, 74, 0.5); background: rgba(184, 90, 74, 0.08); }
+.verdict-mid  { color: #c98c4a; border-color: rgba(201, 140, 74, 0.5); background: rgba(201, 140, 74, 0.08); }
+.verdict-strong { color: var(--gold-bright); border-color: rgba(244, 215, 110, 0.6); background: rgba(244, 215, 110, 0.1); box-shadow: 0 0 20px rgba(244, 215, 110, 0.15); }
+
+.logic-card.option-3 {
+  border-color: rgba(201, 168, 76, 0.35);
+  background: linear-gradient(135deg, rgba(26, 22, 14, 0.95), rgba(35, 28, 16, 0.85));
+  box-shadow: 0 0 40px -15px rgba(201, 168, 76, 0.25);
+}
+
+/* === PULL QUOTE === */
+.pull-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+  font-style: italic;
+  color: var(--white);
+  text-align: center;
+  padding: 4rem 2rem;
+  margin: 4rem 0 0;
+  border-top: 1px solid rgba(201, 168, 76, 0.2);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+  line-height: 1.6;
+  position: relative;
+  font-weight: 300;
+}
+.pull-quote::before, .pull-quote::after {
+  content: '✦';
+  display: block;
+  color: var(--gold);
+  font-size: 0.7rem;
+  margin: 0 0 1rem;
+}
+.pull-quote::after { margin: 1rem 0 0; }
+
+/* === CLOSING === */
+.closing {
+  position: relative;
+  padding: 9rem 2rem;
+  text-align: center;
+  background: radial-gradient(ellipse at center, rgba(26, 22, 14, 0.4) 0%, var(--bg) 70%);
+  overflow: hidden;
+}
+
+#closingStars {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.closing-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.closing-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  color: var(--white);
+  margin-bottom: 2rem;
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.2;
+}
+.closing-title em { color: var(--gold); font-style: italic; }
+
+.closing .verse-card {
+  border: none;
+  border-top: 2px solid var(--gold);
+  border-bottom: 2px solid var(--gold);
+  text-align: center;
+  background: linear-gradient(180deg, rgba(13, 17, 23, 0.95), rgba(17, 22, 30, 0.85));
+  margin: 3rem auto 0;
+  max-width: 660px;
+  box-shadow: 0 0 60px -10px rgba(201, 168, 76, 0.3);
+}
+.closing .verse-card::before { display: none; }
+.closing .verse-card::after { display: none; }
+.closing .verse-card .verse-arabic { text-align: center; }
+
+.closing .section-label {
+  padding-left: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 1em;
+  margin-bottom: 1.6rem;
+}
+.closing .section-label::before {
+  content: '';
+  position: static;
+  width: 32px;
+  height: 1px;
+  background: var(--gold);
+  display: inline-block;
+  top: auto;
+}
+.closing .section-label::after {
+  content: '';
+  width: 32px;
+  height: 1px;
+  background: var(--gold);
+  display: inline-block;
+}
+
+/* Glowing centerpiece ornament */
+.gold-ornament {
+  width: 90px;
+  height: 90px;
+  margin: 3rem auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gold-ornament::before {
+  content: '';
+  position: absolute;
+  inset: -25%;
+  background: radial-gradient(circle, rgba(201, 168, 76, 0.35) 0%, transparent 70%);
+  animation: glowPulse 4s ease-in-out infinite;
+}
+.gold-ornament svg {
+  position: relative;
+  z-index: 1;
+  color: var(--gold);
+  filter: drop-shadow(0 0 12px var(--gold));
+}
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+/* === FOOTER === */
+footer {
+  padding: 4rem 2rem 3rem;
+  text-align: center;
+  border-top: 1px solid rgba(201, 168, 76, 0.1);
+  background: var(--bg);
+  position: relative;
+}
+
+.footer-mark {
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.45em;
+  margin-bottom: 1.5rem;
+}
+
+footer p {
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.9;
+  font-family: 'Source Sans 3', sans-serif;
+}
+footer em { color: var(--ink-dim); font-style: italic; }
+
+/* === 3D SCENE CONTAINER === */
+.scene-3d {
+  width: 100%;
+  height: 480px;
+  position: relative;
+  margin: 3rem 0;
+  background: radial-gradient(ellipse at center, rgba(13, 17, 23, 0.6) 0%, transparent 70%);
+  border: 1px solid rgba(201, 168, 76, 0.12);
+  overflow: hidden;
+  cursor: grab;
+}
+.scene-3d::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(201, 168, 76, 0.04) 0%, transparent 50%),
+    radial-gradient(circle at center, transparent 60%, rgba(5, 7, 9, 0.6) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+.scene-3d::after {
+  content: '';
+  position: absolute;
+  top: 12px; left: 12px;
+  width: 24px; height: 24px;
+  border-top: 1px solid var(--gold);
+  border-left: 1px solid var(--gold);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 3;
+}
+.scene-3d-corner-br {
+  position: absolute;
+  bottom: 12px; right: 12px;
+  width: 24px; height: 24px;
+  border-bottom: 1px solid var(--gold);
+  border-right: 1px solid var(--gold);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 3;
+}
+.scene-3d canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+.scene-caption {
+  position: absolute;
+  bottom: 16px;
+  left: 24px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  z-index: 3;
+}
+.scene-hint {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.scene-hint::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold);
+  animation: pulse 2s infinite;
+}
+
+/* === REACTIVE DOT FIELD === */
+.dot-field-section {
+  position: relative;
+  padding: 7rem 2rem;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--bg) 0%, #0a0e14 50%, var(--bg) 100%);
+}
+.dot-field-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+}
+.dot-field-content {
+  position: relative;
+  z-index: 2;
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+  pointer-events: none;
+}
+.dot-field-content * { pointer-events: none; }
+.dot-field-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  color: var(--white);
+  font-style: italic;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  font-weight: 300;
+}
+.dot-field-quote em { color: var(--gold); }
+.dot-field-attribution {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+@media (max-width: 768px) {
+  nav { padding: 0.9rem 1rem; }
+  .nav-links { display: none; gap: 1.2rem; width: 100%; margin-top: 0.8rem; }
+  .nav-links.open { display: flex; }
+  .menu-toggle { display: block; }
+  nav { flex-wrap: wrap; }
+  .section { padding: 5rem 1.2rem 6rem; }
+  .verse-card { padding: 2rem 1.5rem; }
+  .scholar-card { grid-template-columns: 1fr; gap: 0.8rem; }
+  .scholar-num { border-right: none; padding-right: 0; text-align: left; border-bottom: 1px solid rgba(201, 168, 76, 0.2); padding-bottom: 0.5rem; }
+  .logic-num { font-size: 3rem; top: 1rem; right: 1.2rem; }
+  .logic-headline { max-width: 100%; }
+  .closing { padding: 6rem 1.2rem; }
+  .pull-quote { padding: 3rem 1rem; }
+  .scene-3d { height: 360px; margin: 2rem 0; }
+  .dot-field-section { padding: 5rem 1.2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Cursor effects -->
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- Scroll progress bar -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- Sticky nav -->
+<nav id="mainNav">
+  <a href="../" class="nav-mark" style="text-decoration: none;">Night Owl ✦ Reflections</a>
+  <button class="menu-toggle" id="menuToggle">Menu</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#cosmos">Cosmos</a></li>
+    <li><a href="#embryo">Origin</a></li>
+    <li><a href="#seas">Seas</a></li>
+    <li><a href="#fingertips">Identity</a></li>
+    <li><a href="#water">Water</a></li>
+    <li><a href="#moon">Moon</a></li>
+    <li><a href="#iron">Iron</a></li>
+    <li><a href="#orbits">Orbits</a></li>
+    <li><a href="#deepsea">Depths</a></li>
+    <li><a href="#skin">Skin</a></li>
+    <li><a href="#logic">Reason</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <canvas id="starfield"></canvas>
+  <div class="hero-bg-image"></div>
+  <div class="hero-vignette"></div>
+
+  <div class="hero-content">
+    <div class="bismillah-wrap">
+      <svg class="bismillah-svg" viewBox="0 0 540 80" xmlns="http://www.w3.org/2000/svg">
+        <text x="270" y="55" text-anchor="middle" font-family="Amiri, serif" font-size="48">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</text>
+      </svg>
+      <div class="bismillah-translit">In the Name of Allah</div>
+    </div>
+
+    <div class="hero-eyebrow">A Reflection on Revelation &amp; Reality</div>
+
+    <h1>The Quran<br>&amp; What the <span class="gold-word">Universe</span><br>Already Knew</h1>
+
+    <p class="hero-sub">A seventh-century desert. No telescopes. No microscopes. No oceanography. And yet the words spoken there describe what science would not glimpse for a thousand years.</p>
+
+    <div class="hero-divider"></div>
+    <div class="hero-ornament">✦</div>
+  </div>
+
+  <div class="scroll-hint">Descend into the Signs</div>
+</header>
+
+<!-- SECTION 1: COSMOS -->
+<section class="section" id="cosmos">
+  <div class="section-bg" data-bg="https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=2000&q=85" data-speed="0.3"></div>
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Chapter I</div>
+      <h2 class="section-title">
+        <span class="number">Sūrah Adh-Dhāriyāt &middot; 51:47</span>
+        The <em>Expanding</em> Heavens
+      </h2>
+      <div class="divider"></div>
+    </div>
+
+    <div class="verse-card reveal delay-1">
+      <div class="verse-arabic">وَالسَّمَاءَ بَنَيْنَاهَا بِأَيْدٍ وَإِنَّا لَمُوسِعُونَ</div>
+      <div class="verse-translation">"And the heaven, We constructed it with strength, and indeed, We are its expander."</div>
+      <div class="verse-ref">Surah Adh-Dhāriyāt 51:47</div>
+    </div>
+
+    <p class="reveal">For most of human history, the universe was assumed to be static. Aristotle held it. Newton held it. Einstein himself, when his own equations suggested otherwise, added a constant to keep the cosmos still. He would later call it the greatest blunder of his career.</p>
+
+    <p class="reveal">It was only in <strong>1929</strong> that Edwin Hubble, using the 100-inch telescope at Mount Wilson, observed that distant galaxies were receding from us, and from each other, in every direction. The universe was not standing still. It was expanding.</p>
+
+    <p class="reveal">The Arabic word <em>mūsi'ūn</em> in this verse carries a precise meaning: actively widening, continuously enlarging. Not built and finished. Built and still being stretched. It is the present continuous of cosmic inflation, written fourteen centuries before the redshift was measured.</p>
+  </div>
+</section>
+
+<!-- SECTION 2: EMBRYOLOGY -->
+<section class="section" id="embryo">
+  <div class="section-bg" data-bg="https://images.unsplash.com/photo-1631815589968-fdb09a223b1e?w=2000&q=85" data-speed="0.3"></div>
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Chapter II</div>
+      <h2 class="section-title">
+        <span class="number">Sūrah Al-Mu'minūn &middot; 23:12 – 14</span>
+        The <em>Architecture</em> of a Human Being
+      </h2>
+      <div class="divider"></div>
+    </div>
+
+    <div class="verse-card reveal delay-1">
+      <div class="verse-arabic">وَلَقَدْ خَلَقْنَا الْإِنسَانَ مِن سُلَالَةٍ مِّن طِينٍ ۞ ثُمَّ جَعَلْنَاهُ نُطْفَةً فِي قَرَارٍ مَّكِينٍ ۞ ثُمَّ خَلَقْنَا النُّطْفَةَ عَلَقَةً فَخَلَقْنَا الْعَلَقَةَ مُضْغَةً فَخَلَقْنَا الْمُضْغَةَ عِظَامًا فَكَسَوْنَا الْعِظَامَ لَحْمًا ثُمَّ أَنشَأْنَاهُ خَلْقًا آخَرَ ۚ فَتَبَارَكَ اللَّهُ أَحْسَنُ الْخَالِقِينَ</div>
+      <div class="verse-translation">"And certainly We created man from an extract of clay. Then We placed him as a drop in a place of settlement, firmly fixed. Then We made the drop into a clinging clot, and We made the clot into a lump, and We made from the lump bones, and We covered the bones with flesh. Then We brought him into being as a new creation. Blessed is Allah, the best of creators."</div>
+      <div class="verse-ref">Surah Al-Mu'minūn 23:12 to 14</div>
+    </div>
+
+    <p class="reveal">Each Arabic word in this passage is a precise developmental stage. Read in sequence, they trace embryonic morphology with a fidelity that modern textbooks struggle to improve upon.</p>
+
+    <div class="embryo-stages reveal delay-1">
+      <div class="stage-card">
+        <svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="6" stroke-width="2"/><circle cx="25" cy="25" r="14" stroke-width="1" opacity="0.5"/></svg>
+        <div class="stage-arabic">نُطْفَة</div>
+        <div class="stage-name">Nutfah</div>
+        <div class="stage-meaning">A small drop, the zygote</div>
+      </div>
+      <div class="stage-card">
+        <svg viewBox="0 0 50 50"><path d="M15 35 Q 25 5, 35 35 Z" stroke-width="2"/><circle cx="30" cy="20" r="2" fill="currentColor"/></svg>
+        <div class="stage-arabic">عَلَقَة</div>
+        <div class="stage-name">'Alaqah</div>
+        <div class="stage-meaning">Clinging, leech-like form</div>
+      </div>
+      <div class="stage-card">
+        <svg viewBox="0 0 50 50"><path d="M12 30 Q 18 12, 28 18 Q 40 22, 38 35 Q 30 42, 18 38 Q 10 35, 12 30" stroke-width="2"/></svg>
+        <div class="stage-arabic">مُضْغَة</div>
+        <div class="stage-name">Mudghah</div>
+        <div class="stage-meaning">Chewed-like lump</div>
+      </div>
+      <div class="stage-card">
+        <svg viewBox="0 0 50 50"><line x1="15" y1="15" x2="35" y2="35" stroke-width="2"/><line x1="35" y1="15" x2="15" y2="35" stroke-width="2"/><circle cx="25" cy="25" r="3" fill="currentColor"/></svg>
+        <div class="stage-arabic">عِظَام</div>
+        <div class="stage-name">'Izhām</div>
+        <div class="stage-meaning">Formation of bones</div>
+      </div>
+      <div class="stage-card">
+        <svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="16" stroke-width="2"/><circle cx="25" cy="25" r="10" stroke-width="1" opacity="0.6"/><circle cx="25" cy="25" r="4" fill="currentColor"/></svg>
+        <div class="stage-arabic">لَحْم</div>
+        <div class="stage-name">Lahm</div>
+        <div class="stage-meaning">Clothing of flesh</div>
+      </div>
+    </div>
+
+    <p class="reveal">The 'alaqah stage is particularly striking. The Arabic root carries three simultaneous meanings: to cling, to suspend, and a leech. All three accurately describe the embryo between days 7 and 24 after conception, when it clings to the uterine wall, hangs from a primitive stalk, and bears an uncanny morphological resemblance to a leech as it draws nourishment from its host.</p>
+
+    <p class="reveal">Professor Keith Moore, one of the world's foremost embryologists, wrote that <em>"the Quran provides a description of human development that is in agreement with modern embryological discoveries... a divine source for these statements is plausible."</em> He worked with this verse for decades. He could find no error.</p>
+  </div>
+</section>
+
+<!-- SECTION 3: SEAS -->
+<section class="section" id="seas">
+  <div class="section-bg" data-bg="https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=2000&q=85" data-speed="0.4"></div>
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Chapter III</div>
+      <h2 class="section-title">
+        <span class="number">Sūrah Ar-Raḥmān &middot; 55:19 – 20 &middot; Al-Furqān &middot; 25:53</span>
+        The <em>Barrier</em> Between Two Seas
+      </h2>
+      <div class="divider"></div>
+    </div>
+
+    <div class="verse-card reveal delay-1">
+      <div class="verse-arabic">مَرَجَ الْبَحْرَيْنِ يَلْتَقِيَانِ ۞ بَيْنَهُمَا بَرْزَخٌ لَّا يَبْغِيَانِ</div>
+      <div class="verse-translation">"He released the two seas, meeting one another. Between them is a barrier they do not transgress."</div>
+      <div class="verse-ref">Surah Ar-Raḥmān 55:19 to 20</div>
+    </div>
+
+    <div class="verse-card reveal delay-2">
+      <div class="verse-arabic">وَهُوَ الَّذِي مَرَجَ الْبَحْرَيْنِ هَٰذَا عَذْبٌ فُرَاتٌ وَهَٰذَا مِلْحٌ أُجَاجٌ وَجَعَلَ بَيْنَهُمَا بَرْزَخًا وَحِجْرًا مَّحْجُورًا</div>
+      <div class="verse-translation">"And it is He who has released the two seas: one fresh and sweet, the other salty and bitter. And He placed between them a barrier and a partition forbidden to be passed."</div>
+      <div class="verse-ref">Surah Al-Furqān 25:53</div>
+    </div>
+
+    <p class="reveal">Where bodies of water of different salinity, temperature, or density meet, they do not simply mix. They form a region called a <strong>halocline</strong> or <strong>pycnocline</strong>, an invisible barrier of physical chemistry that prevents the two from blending. Each retains its character even as they touch.</p>
+
+    <p class="reveal">This phenomenon is visible at the Strait of Gibraltar, where the Mediterranean meets the Atlantic. It is visible at the mouth of the Amazon, where freshwater rivers push back the ocean for kilometers before yielding. Modern oceanography did not formally describe these zones until the work of researchers like Jacques Cousteau in the twentieth century.</p>
+
+    <p class="reveal">The Quran names what cannot be seen with the naked eye, calling it <em>barzakh</em>, a partition. A 7th-century desert dweller had no plausible exposure to oceanographic stratification. Yet here is the boundary, precisely identified, fourteen hundred years early.</p>
+  </div>
+</section>
+
+<!-- SECTION 4: FINGERTIPS -->
+<section class="section" id="fingertips">
+  <div class="section-bg" data-bg="https://images.unsplash.com/photo-1516570161787-2fd917215a3d?w=2000&q=85" data-speed="0.3"></div>
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Chapter IV</div>
+      <h2 class="section-title">
+        <span class="number">Sūrah Al-Qiyāmah &middot; 75:3 – 4</span>
+        The <em>Signature</em> of the Self
+      </h2>
+      <div class="divider"></div>
+    </div>
+
+    <div class="verse-card reveal delay-1">
+      <div class="verse-arabic">أَيَحْسَبُ الْإِنسَانُ أَلَّن نَّجْمَعَ عِظَامَهُ ۞ بَلَىٰ قَادِرِينَ عَلَىٰ أَن نُّسَوِّيَ بَنَانَهُ</div>
+      <div class="verse-translation">"Does man think that We will not assemble his bones? Yes. We are able to reconstruct even his fingertips."</div>
+      <div class="verse-ref">Surah Al-Qiyāmah 75:3 to 4</div>
+    </div>
+
+    <p class="reveal">In 1888, Francis Galton formally established what police forensics and identity records have relied upon ever since: every human being possesses a unique fingerprint pattern. No two individuals on earth share the same arrangement of ridges. The fingertip, of all places on the body, became the universal signature of personhood.</p>
+
+    <p class="reveal">The Quran's choice of <em>banān</em>, fingertips, in the context of resurrection, is precise to the point of being startling. The verse is not arguing that the bones will be reassembled, an ordinary skeletal claim. It is making a stronger claim: that even the smallest unit of individual identity, the very feature science would later use to distinguish one human from every other human alive or dead, will be restored.</p>
+
+    <p class="reveal">A skeptic in the year 632 CE might have asked: how can scattered bones be brought back? The answer chosen in the verse is not "Allah will manage the bones." It is "Allah will manage what makes <em>you, you</em>, down to the ridges no one yet knew were unique."</p>
+  </div>
+</section>
+
+<!-- SECTION 5: WATER -->
+<section class="section" id="water">
+  <div class="section-bg" data-bg="https://images.unsplash.com/photo-1559825481-12a05cc00344?w=2000&q=85" data-speed="0.4"></div>
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Chapter V</div>
+      <h2 class="section-title">
+        <span class="number">Sūrah Al-Anbiyā &middot; 21:30</span>
+        From <em>Water</em>, Every Living Thing
+      </h2>
+      <div class="divider"></div>
+    </div>
+
+    <div class="verse-card reveal delay-1">
+      <div class="verse-arabic">أَوَلَمْ يَرَ الَّذِينَ كَفَرُوا أَنَّ السَّمَاوَاتِ وَالْأَرْضَ كَانَتَا رَتْقًا فَفَتَقْنَاهُمَا ۖ وَجَعَلْنَا مِنَ الْمَاءِ كُلَّ شَيْءٍ حَيٍّ ۖ أَفَلَا يُؤْمِنُونَ</div>
+      <div class="verse-translation">"Have those who disbelieved not considered that the heavens and the earth were a joined entity, and We separated them, and made from water every living thing? Then will they not believe?"</div>
+      <div class="verse-ref">Surah Al-Anbiyā 21:30</div>
+    </div>
+
+    <p class="reveal">A single verse, two claims. The first describes the heavens and the earth as having been <em>ratq</em>, sewn together, a single joined entity, before being <em>fatq</em>, separated. The phrasing aligns with what modern cosmology calls the Big Bang: the universe emerging from an initial singularity in which all matter, energy, space, and time were unified.</p>
+
+    <p class="reveal">The second claim is biological. <em>Every living thing was made from water.</em> Every cell on earth is structured around water as its medium. Every metabolic process depends on it. Life as it is known cannot exist without it. NASA's search for life beyond earth is built on a single guiding principle: <strong>follow the water.</strong></p>
+
+    <p class="reveal">Two of the most foundational claims in all of natural science, cosmological and biological, sit beside each other in a verse from the seventh century. The reader is then asked, simply: will you not consider?</p>
+  </div>
+</section>
+
+<!-- SECTION 6: MOON -->
+<section class="section" id="moon">
+  <div class="section-bg" data-bg="https://images.unsplash.com/photo-1532693322450-2cb5c511067d?w=2000&q=85" data-speed="0.35"></div>
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Chapter VI</div>
+      <h2 class="section-title">
+        <span class="number">Sūrah Nūḥ &middot; 71:16 &middot; Yūnus &middot; 10:5</span>
+        A <em>Lamp</em> and a Reflected Light
+      </h2>
+      <div class="divider"></div>
+    </div>
+
+    <div class="verse-card reveal delay-1">
+      <div class="verse-arabic">وَجَعَلَ الْقَمَرَ فِيهِنَّ نُورًا وَجَعَلَ الشَّمْسَ سِرَاجًا</div>
+      <div class="verse-translation">"And He made the moon therein a light, and made the sun a lamp."</div>
+      <div class="verse-ref">Surah Nūḥ 71:16</div>
+    </div>
+
+    <p class="reveal">The Quran uses two different Arabic words where ancient texts typically used one. The sun is called <em>sirāj</em>, a lamp, also called <em>wahhāj</em> (blazing) elsewhere. The moon is called <em>nūr</em>, a light, and <em>munīr</em> (illuminating), but never a lamp.</p>
+
+    <p class="reveal">The distinction is not poetic. It is physical. The sun is a source of light, generating its own radiation through nuclear fusion. The moon is not a source. It produces no light of its own. What appears to be moonlight is reflected sunlight, bouncing off lunar regolith back toward earth. <strong>The Quran's linguistic distinction maps exactly onto the astrophysical one.</strong></p>
+
+    <p class="reveal">Ancient cultures, including the Greeks and the Romans, often treated the moon as a self-luminous body, a smaller version of the sun. The Quran refuses that error. It calls the sun a lamp and the moon a light, and waits for science to catch up.</p>
+  </div>
+</section>
+
+<!-- SECTION 7: IRON FROM THE SKY (with 3D atom) -->
+<section class="section" id="iron">
+  <div class="section-bg" data-bg="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=2000&q=85" data-speed="0.35"></div>
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Chapter VII</div>
+      <h2 class="section-title">
+        <span class="number">Sūrah Al-Ḥadīd &middot; 57:25</span>
+        Iron <em>Sent Down</em> from the Sky
+      </h2>
+      <div class="divider"></div>
+    </div>
+
+    <div class="verse-card reveal delay-1">
+      <div class="verse-arabic">وَأَنزَلْنَا الْحَدِيدَ فِيهِ بَأْسٌ شَدِيدٌ وَمَنَافِعُ لِلنَّاسِ</div>
+      <div class="verse-translation">"And We sent down iron, in which is great military might and benefits for the people."</div>
+      <div class="verse-ref">Surah Al-Ḥadīd 57:25</div>
+    </div>
+
+    <p class="reveal">The Arabic verb <em>anzalnā</em> (we sent down) is the same verb used elsewhere for rain and for revelation itself. For centuries this phrasing was read as a metaphor. Iron was simply mined from the earth. What could it mean that it was "sent down"?</p>
+
+    <p class="reveal">Modern astrophysics has answered the question with surprising literalness. The fusion process inside ordinary stars stops at iron. Elements heavier than helium up to iron form in stellar cores, but iron itself is the end of the road for stellar fusion. To produce iron and seed it across the cosmos, you need a <strong>supernova explosion</strong>, a dying star detonating with enough energy to forge the heavy elements and hurl them across interstellar space.</p>
+
+    <p class="reveal">Every iron atom in your blood, in your sword, in the rebar of every building you have ever entered, was forged in the core of a star that died long before our solar system existed. It was, in the most literal cosmological sense, <em>sent down</em>. The earth did not produce its own iron. It received it.</p>
+
+    <div class="scene-3d reveal" id="ironScene">
+      <div class="scene-3d-corner-br"></div>
+      <div class="scene-caption">Stylized Iron Atom &middot; Fe</div>
+      <div class="scene-hint">Move Cursor To Interact</div>
+    </div>
+
+    <p class="reveal">The same verse also contains a numerical curiosity that has fascinated commentators. Iron's atomic number is 26. The Arabic word <em>al-ḥadīd</em> (iron) has a numerical value of 26 in Abjad numerology. The verse it appears in is verse 25 of chapter 57, where 57 is also the mass number of iron's most stable isotope. None of this is proof of anything by itself. But it is the kind of detail that makes thoughtful readers pause.</p>
+  </div>
+</section>
+
+<!-- SECTION 8: ORBITS (with 3D orbital scene) -->
+<section class="section" id="orbits">
+  <div class="section-bg" data-bg="https://images.unsplash.com/photo-1543722530-d2c3201371e7?w=2000&q=85" data-speed="0.4"></div>
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Chapter VIII</div>
+      <h2 class="section-title">
+        <span class="number">Sūrah Al-Anbiyā &middot; 21:33 &middot; Yā-Sīn &middot; 36:40</span>
+        Each in an <em>Orbit</em>, Swimming
+      </h2>
+      <div class="divider"></div>
+    </div>
+
+    <div class="verse-card reveal delay-1">
+      <div class="verse-arabic">وَهُوَ الَّذِي خَلَقَ اللَّيْلَ وَالنَّهَارَ وَالشَّمْسَ وَالْقَمَرَ ۖ كُلٌّ فِي فَلَكٍ يَسْبَحُونَ</div>
+      <div class="verse-translation">"And it is He who created the night and the day and the sun and the moon. Each, in an orbit, is swimming."</div>
+      <div class="verse-ref">Surah Al-Anbiyā 21:33</div>
+    </div>
+
+    <p class="reveal">The verb <em>yasbaḥūn</em> means to swim, to glide through a medium with self-propelled motion. The Quran does not say the celestial bodies are dragged, attached to crystal spheres, or carried by chariots, all of which were the prevailing models in 7th century cosmology. It says they swim. Each in its own <em>falak</em>, its own orbit.</p>
+
+    <p class="reveal">The implications were ahead of their time on several counts. The sun has its own motion, not merely an apparent rise and fall, a fact only confirmed when astronomers measured the sun's orbit around the galactic center, completing one revolution every 225 million years. The moon and the sun do not share a path. Each follows its own. And the bodies move freely through space, not fixed to any tangible structure.</p>
+
+    <div class="scene-3d reveal" id="orbitScene">
+      <div class="scene-3d-corner-br"></div>
+      <div class="scene-caption">Each in Its Own Orbit</div>
+      <div class="scene-hint">Drift Your Cursor</div>
+    </div>
+
+    <div class="verse-card reveal">
+      <div class="verse-arabic">لَا الشَّمْسُ يَنبَغِي لَهَا أَن تُدْرِكَ الْقَمَرَ وَلَا اللَّيْلُ سَابِقُ النَّهَارِ ۚ وَكُلٌّ فِي فَلَكٍ يَسْبَحُونَ</div>
+      <div class="verse-translation">"It is not for the sun to overtake the moon, nor does the night outstrip the day. Each, in an orbit, is swimming."</div>
+      <div class="verse-ref">Surah Yā-Sīn 36:40</div>
+    </div>
+
+    <p class="reveal">Each body has its own path. Each path has its own period. They do not collide. They do not switch lanes. The verse is, in its own poetic register, a description of orbital mechanics.</p>
+  </div>
+</section>
+
+<!-- DOT FIELD INTERLUDE (interactive constellation) -->
+<section class="dot-field-section" id="constellation">
+  <canvas class="dot-field-canvas" id="dotField"></canvas>
+  <div class="dot-field-content">
+    <p class="dot-field-quote reveal">"We will show them Our signs in the horizons,<br>and within <em>themselves</em>."</p>
+    <div class="dot-field-attribution reveal delay-1">Surah Fuṣṣilat &middot; 41:53</div>
+  </div>
+</section>
+
+<!-- SECTION 9: DEEP SEA DARKNESS -->
+<section class="section" id="deepsea">
+  <div class="section-bg" data-bg="https://images.unsplash.com/photo-1551244072-5d12893278ab?w=2000&q=85" data-speed="0.3"></div>
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Chapter IX</div>
+      <h2 class="section-title">
+        <span class="number">Sūrah An-Nūr &middot; 24:40</span>
+        Darkness Upon <em>Darkness</em>, in the Deep
+      </h2>
+      <div class="divider"></div>
+    </div>
+
+    <div class="verse-card reveal delay-1">
+      <div class="verse-arabic">أَوْ كَظُلُمَاتٍ فِي بَحْرٍ لُّجِّيٍّ يَغْشَاهُ مَوْجٌ مِّن فَوْقِهِ مَوْجٌ مِّن فَوْقِهِ سَحَابٌ ۚ ظُلُمَاتٌ بَعْضُهَا فَوْقَ بَعْضٍ إِذَا أَخْرَجَ يَدَهُ لَمْ يَكَدْ يَرَاهَا</div>
+      <div class="verse-translation">"Or like darknesses within a deep sea which is covered by waves, upon which are waves, over which are clouds. Darknesses, one above another. When he puts out his hand, he can hardly see it."</div>
+      <div class="verse-ref">Surah An-Nūr 24:40</div>
+    </div>
+
+    <p class="reveal">A 7th century Arab was, by every available account, not a deep-sea diver. Pearl divers in the Persian Gulf reached at most 30 to 40 meters. They knew the surface. They had no instruments to study what lay beneath.</p>
+
+    <p class="reveal">The verse describes three distinct features that modern oceanography has confirmed. <strong>First, internal waves.</strong> Below the visible surface of the ocean, hidden waves move along the boundaries between layers of different density. These were unknown to science until the early 1900s and are now mapped with sonar and satellite altimetry. The verse names them as <em>"waves, upon which are waves."</em></p>
+
+    <p class="reveal">Second, the layering of darkness. Light penetrating the ocean is absorbed progressively. Red wavelengths disappear in the first few meters. Orange follows. Then yellow. By 200 meters, the photic zone ends. Below that, all is darkness. <em>"Darknesses, one above another."</em></p>
+
+    <p class="reveal">Third, the practical observation that at sufficient depth, <em>"when he puts out his hand, he can hardly see it."</em> This is the experience of any diver beneath the photic zone. It is also a phrase no surface-dwelling desert population had any business knowing.</p>
+  </div>
+</section>
+
+<!-- SECTION 10: PAIN IN SKIN -->
+<section class="section" id="skin">
+  <div class="section-bg" data-bg="https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=2000&q=85" data-speed="0.35"></div>
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Chapter X</div>
+      <h2 class="section-title">
+        <span class="number">Sūrah An-Nisā &middot; 4:56</span>
+        Pain Lives in the <em>Skin</em>
+      </h2>
+      <div class="divider"></div>
+    </div>
+
+    <div class="verse-card reveal delay-1">
+      <div class="verse-arabic">إِنَّ الَّذِينَ كَفَرُوا بِآيَاتِنَا سَوْفَ نُصْلِيهِمْ نَارًا كُلَّمَا نَضِجَتْ جُلُودُهُم بَدَّلْنَاهُمْ جُلُودًا غَيْرَهَا لِيَذُوقُوا الْعَذَابَ</div>
+      <div class="verse-translation">"Indeed, those who disbelieve in Our verses, We will drive them into a fire. Every time their skins are roasted through, We will replace them with other skins, so that they may taste the punishment."</div>
+      <div class="verse-ref">Surah An-Nisā 4:56</div>
+    </div>
+
+    <p class="reveal">A reader unfamiliar with neurology might miss the precision in this verse. Why specify that the skins are replaced? Surely once a body is in fire, the suffering continues regardless.</p>
+
+    <p class="reveal">It does not. <strong>Pain is mediated almost entirely through nerve endings located in the skin.</strong> The dermis and epidermis are densely populated with nociceptors, the specialized receptors that transduce thermal, chemical, and mechanical damage into pain signals. Once those receptors are destroyed, as happens with third-degree burns that incinerate the full thickness of the skin, pain at that site largely ceases. The deeper tissues, even when severely injured, do not generate the same conscious pain experience.</p>
+
+    <p class="reveal">This is why severe burn victims often describe the deepest wounds as paradoxically painless, while the surrounding less-injured areas are agonizing. The science of pain reception was not formally mapped until the 19th and 20th centuries. Yet the verse, in its own theological register, identifies the skin as the locus of pain so precisely that it specifies the renewal of the skin itself as the mechanism by which suffering would be sustained.</p>
+
+    <p class="reveal">As with the fingertip verse, the choice of detail is the signature. Not just "they will suffer," but a specification that demonstrates anatomical understanding the era had no way of possessing.</p>
+  </div>
+</section>
+
+<!-- SCHOLARS -->
+<section class="section" id="scholars">
+  <div class="section-bg" data-bg="https://images.unsplash.com/photo-1532012197267-da84d127e765?w=2000&q=85" data-speed="0.3"></div>
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Recognition</div>
+      <h2 class="section-title">Scholars Who <em>Paused</em> and Took Note</h2>
+      <div class="divider"></div>
+      <p>These are researchers and scientists who, through their own fields of expertise, encountered the Quran's claims and responded with documented acknowledgment of their accuracy.</p>
+    </div>
+
+    <div class="scholar-card reveal">
+      <div class="scholar-num">01</div>
+      <div>
+        <div class="scholar-name">Prof. Keith L. Moore</div>
+        <div class="scholar-title">Professor of Anatomy &amp; Cell Biology &middot; University of Toronto &middot; Author, The Developing Human</div>
+        <p class="scholar-text">One of the foremost embryologists of the twentieth century. After studying the Quranic descriptions of embryonic stages, Moore stated they correspond with remarkable precision to modern embryology. He collaborated with Muslim scholars on a special edition of his textbook annotated with Quranic references and presented these findings at international medical conferences.</p>
+      </div>
+    </div>
+
+    <div class="scholar-card reveal">
+      <div class="scholar-num">02</div>
+      <div>
+        <div class="scholar-name">Dr. Maurice Bucaille</div>
+        <div class="scholar-title">French Surgeon &middot; Author, The Bible, the Quran and Science (1976)</div>
+        <p class="scholar-text">A French surgeon who became the first Western scholar to publish a sustained scientific examination of the Quran. His book analyzed the text across cosmology, biology, and physiology, concluding that the Quran contains no demonstrable scientific errors and predates many modern discoveries. The work has been translated into dozens of languages and remains foundational in the field.</p>
+      </div>
+    </div>
+
+    <div class="scholar-card reveal">
+      <div class="scholar-num">03</div>
+      <div>
+        <div class="scholar-name">Dr. Yoshihide Kozai</div>
+        <div class="scholar-title">Professor Emeritus &middot; Former Director, National Astronomical Observatory of Japan</div>
+        <p class="scholar-text">A respected astrophysicist who, at a symposium on Islam and modern science, stated: <em>"I am very much impressed by finding true astronomical facts in the Quran, and for us, modern astronomers, there is no contradiction between Islamic religion and science."</em></p>
+      </div>
+    </div>
+
+    <div class="scholar-card reveal">
+      <div class="scholar-num">04</div>
+      <div>
+        <div class="scholar-name">Dr. Tejatet Tejasen</div>
+        <div class="scholar-title">Head of Anatomy Department &middot; Faculty of Medicine, Chiang Mai University, Thailand</div>
+        <p class="scholar-text">After studying the Quranic verses on embryology at the 8th Saudi Medical Conference, Tejasen stated: <em>"From my studies and from what I have learned throughout this conference, I believe that everything that has been recorded in the Quran 1,400 years ago must be the truth, that can be proved by the scientific means."</em></p>
+      </div>
+    </div>
+
+    <div class="scholar-card reveal">
+      <div class="scholar-num">05</div>
+      <div>
+        <div class="scholar-name">Francis Galton (Historical Context)</div>
+        <div class="scholar-title">British Scientist &middot; Formalized Fingerprint Uniqueness, 1888</div>
+        <p class="scholar-text">Not a commentator on the Quran, but a historical figure whose work matters here. Galton established that no two human beings share an identical fingerprint pattern. His discovery, published over twelve centuries after the verse on fingertips, retroactively illuminates the precision of <em>banān</em> in 75:4 as the marker of individual identity.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOGIC: THREE OPTIONS -->
+<section class="section" id="logic">
+  <div class="section-bg" data-bg="https://images.unsplash.com/photo-1502134249126-9f3755a50d78?w=2000&q=85" data-speed="0.35"></div>
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">The Rational Conclusion</div>
+      <h2 class="section-title">Three Options.<br>Only <em>One</em> Holds Up.</h2>
+      <div class="divider"></div>
+      <p>When confronted with a seventh century text containing repeated, specific, accurate descriptions of phenomena not scientifically discovered for over a thousand years, an honest mind has exactly three possible explanations.</p>
+    </div>
+
+    <div class="logic-grid">
+      <div class="logic-card reveal">
+        <div class="logic-num">I</div>
+        <div class="logic-label">Option One</div>
+        <h3 class="logic-headline">Extraordinary Coincidence</h3>
+        <div class="logic-verdict verdict-weak">Statistically Indefensible</div>
+        <p>The text happened to be correct, repeatedly, across multiple unrelated scientific disciplines, by chance. Coincidence as an explanation weakens exponentially with each additional accurate claim. Across embryology, cosmology, hydrology, and astrophysics, the probability of sustained coincidence collapses toward zero. No serious scientist treats repeating, specific accuracy as random.</p>
+      </div>
+
+      <div class="logic-card reveal">
+        <div class="logic-num">II</div>
+        <div class="logic-label">Option Two</div>
+        <h3 class="logic-headline">He Somehow Knew Through Human Means</h3>
+        <div class="logic-verdict verdict-mid">Historically Unsupportable</div>
+        <p>This raises an immediate question: from where? Seventh century Mecca had no libraries, no scientific academies, no contact with Greek scientific tradition at this level. The Prophet ﷺ was known to be unlettered, <em>Ummi</em>, a fact his fiercest enemies never disputed though they had every motivation to. And the deeper problem: even Greek and Persian science of that era did not contain these specific discoveries. You cannot transmit knowledge that no one on earth possessed.</p>
+      </div>
+
+      <div class="logic-card option-3 reveal">
+        <div class="logic-num">III</div>
+        <div class="logic-label">Option Three</div>
+        <h3 class="logic-headline">The Text Is What It Claims to Be</h3>
+        <div class="logic-verdict verdict-strong">Most Rationally Defensible</div>
+        <p>The Quran is the speech of the Creator, the only Being with complete knowledge of what He created. When the other two options fail, statistically and historically, what remains must be taken seriously regardless of how extraordinary it seems. This is not a leap of blind faith. It is the conclusion of a process of elimination, the same kind of reasoning that produced every scientific discovery in the list above. The Quran itself invites exactly this method: <em>"Do they not reflect? Do they not reason?"</em> is asked repeatedly across its pages.</p>
+      </div>
+    </div>
+
+    <div class="pull-quote reveal">Science describes how the universe operates under its current rules.<br>It does not speak to what the Author of those rules can do<br>outside of them.</div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="closing" id="closing">
+  <canvas id="closingStars"></canvas>
+  <div class="closing-inner">
+    <div class="section-label" style="padding-left: 0;">Final Reflection</div>
+    <h2 class="closing-title">The Universe Was Never Silent.<br><em>We Just Learned to Listen.</em></h2>
+
+    <p>What makes the Quran's scientific references remarkable is not merely their accuracy. It is the manner in which they appear. Not as a science textbook, but woven into a text of guidance, law, ethics, and worship. They are not the point. They are the signature.</p>
+
+    <p>A craftsman leaves marks that identify their work. The Creator of the universe, it seems, left markers inside His final revealed book, markers only visible to those who developed the instruments to find them. The expanding heavens. The embryo. The seas. The fingertips. The moon's reflected light.</p>
+
+    <p>The Quran does not ask you to abandon reason. It asks you to use it, fully, honestly, and not to stop where the conclusion becomes inconvenient.</p>
+
+    <div class="gold-ornament">
+      <svg width="80" height="80" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="1">
+        <circle cx="40" cy="40" r="35"/>
+        <circle cx="40" cy="40" r="24" opacity="0.6"/>
+        <circle cx="40" cy="40" r="14" opacity="0.4"/>
+        <path d="M40 5 L42 38 L40 75 L38 38 Z" fill="currentColor" opacity="0.7"/>
+        <path d="M5 40 L38 42 L75 40 L38 38 Z" fill="currentColor" opacity="0.7"/>
+        <circle cx="40" cy="40" r="3" fill="currentColor"/>
+      </svg>
+    </div>
+
+    <div class="verse-card">
+      <div class="verse-arabic">سَنُرِيهِمْ آيَاتِنَا فِي الْآفَاقِ وَفِي أَنفُسِهِمْ حَتَّىٰ يَتَبَيَّنَ لَهُمْ أَنَّهُ الْحَقُّ ۗ أَوَلَمْ يَكْفِ بِرَبِّكَ أَنَّهُ عَلَىٰ كُلِّ شَيْءٍ شَهِيدٌ</div>
+      <div class="verse-translation">"We will show them Our signs in the horizons and within themselves until it becomes clear to them that it is the truth. Is it not sufficient concerning your Lord that He is, over all things, a Witness?"</div>
+      <div class="verse-ref">Surah Fuṣṣilat 41:53</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-mark">✦ A Personal Document of Reflection ✦</div>
+  <p>References: The Holy Quran (Sahih International) &middot; Keith L. Moore, <em>The Developing Human</em>, 8th Edition &middot; Maurice Bucaille, <em>The Bible, the Quran and Science</em>, 1976 &middot; Edwin Hubble, <em>A Relation Between Distance and Radial Velocity Among Extra Galactic Nebulae</em>, 1929 &middot; Francis Galton, <em>Finger Prints</em>, 1892 &middot; Proceedings of the 8th Saudi Medical Conference</p>
+</footer>
+
+<script>
+/* === CURSOR GLOW === */
+(function () {
+  const glow = document.getElementById('cursorGlow');
+  const dot = document.getElementById('cursorDot');
+  if (window.matchMedia('(pointer: coarse)').matches) {
+    glow.style.display = 'none';
+    dot.style.display = 'none';
+    return;
+  }
+  let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+  let gx = mx, gy = my;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%, -50%)`;
+  });
+  function loop() {
+    gx += (mx - gx) * 0.12;
+    gy += (my - gy) * 0.12;
+    glow.style.transform = `translate(${gx}px, ${gy}px) translate(-50%, -50%)`;
+    requestAnimationFrame(loop);
+  }
+  loop();
+  document.addEventListener('mouseenter', () => { glow.style.opacity = '1'; dot.style.opacity = '1'; });
+  document.addEventListener('mouseleave', () => { glow.style.opacity = '0'; dot.style.opacity = '0'; });
+})();
+
+/* === PROGRESS BAR === */
+(function () {
+  const bar = document.getElementById('progressBar');
+  function update() {
+    const h = document.documentElement;
+    const scrolled = h.scrollTop;
+    const total = h.scrollHeight - h.clientHeight;
+    const pct = total > 0 ? (scrolled / total) * 100 : 0;
+    bar.style.width = pct + '%';
+  }
+  document.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+
+/* === STICKY NAV REVEAL === */
+(function () {
+  const nav = document.getElementById('mainNav');
+  function check() {
+    if (window.scrollY > window.innerHeight * 0.6) nav.classList.add('visible');
+    else nav.classList.remove('visible');
+  }
+  document.addEventListener('scroll', check, { passive: true });
+  check();
+  document.getElementById('menuToggle').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('open'));
+  });
+})();
+
+/* === HERO STARFIELD === */
+(function () {
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  let mx = -9999, my = -9999;
+
+  function resize() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    const count = Math.floor((canvas.width * canvas.height) / 6500);
+    stars = [];
+    for (let i = 0; i < count; i++) {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
+      stars.push({
+        ox: x, oy: y, x, y,
+        vx: 0, vy: 0,
+        r: Math.random() * 1.3 + 0.2,
+        a: Math.random() * 0.7 + 0.1,
+        da: (Math.random() - 0.5) * 0.012,
+        drift_vx: (Math.random() - 0.5) * 0.08,
+        drift_vy: (Math.random() - 0.5) * 0.08,
+        color: Math.random() > 0.92 ? 'gold' : 'white'
+      });
+    }
+  }
+
+  canvas.addEventListener('mousemove', e => {
+    const rect = canvas.getBoundingClientRect();
+    mx = e.clientX - rect.left;
+    my = e.clientY - rect.top;
+  });
+  canvas.addEventListener('mouseleave', () => { mx = -9999; my = -9999; });
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => {
+      s.a += s.da;
+      if (s.a > 1) { s.a = 1; s.da = -s.da; }
+      if (s.a < 0.05) { s.a = 0.05; s.da = -s.da; }
+
+      // Mouse repulsion
+      const dx = s.x - mx;
+      const dy = s.y - my;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const force = Math.max(0, 110 - dist) / 110;
+      if (force > 0) {
+        const angle = Math.atan2(dy, dx);
+        s.vx += Math.cos(angle) * force * 0.6;
+        s.vy += Math.sin(angle) * force * 0.6;
+      }
+      s.vx += (s.ox - s.x) * 0.02;
+      s.vy += (s.oy - s.y) * 0.02;
+      s.vx *= 0.9;
+      s.vy *= 0.9;
+      s.ox += s.drift_vx;
+      s.oy += s.drift_vy;
+      if (s.ox < 0) s.ox = canvas.width; if (s.ox > canvas.width) s.ox = 0;
+      if (s.oy < 0) s.oy = canvas.height; if (s.oy > canvas.height) s.oy = 0;
+      s.x += s.vx;
+      s.y += s.vy;
+
+      const proximity = Math.max(0, 130 - dist) / 130;
+      const finalAlpha = Math.min(1, s.a + proximity * 0.7);
+      const color = s.color === 'gold' ? `rgba(244, 215, 110, ${finalAlpha})` : `rgba(255, 250, 230, ${finalAlpha})`;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r + proximity * 1.2, 0, Math.PI * 2);
+      ctx.fill();
+      if (s.r > 1 || proximity > 0.3) {
+        ctx.fillStyle = s.color === 'gold' ? `rgba(244, 215, 110, ${finalAlpha * 0.2})` : `rgba(255, 250, 230, ${finalAlpha * 0.2})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, (s.r + proximity * 1.2) * 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+    requestAnimationFrame(draw);
+  }
+  resize();
+  draw();
+  window.addEventListener('resize', resize);
+})();
+
+/* === CLOSING STARFIELD (denser, slower) === */
+(function () {
+  const canvas = document.getElementById('closingStars');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  function resize() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    const count = Math.floor((canvas.width * canvas.height) / 9000);
+    stars = [];
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1 + 0.2,
+        a: Math.random() * 0.6 + 0.1,
+        da: (Math.random() - 0.5) * 0.008
+      });
+    }
+  }
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => {
+      s.a += s.da;
+      if (s.a > 0.85) { s.a = 0.85; s.da = -s.da; }
+      if (s.a < 0.05) { s.a = 0.05; s.da = -s.da; }
+      ctx.fillStyle = `rgba(244, 215, 110, ${s.a * 0.7})`;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  resize();
+  draw();
+  window.addEventListener('resize', resize);
+})();
+
+/* === REVEAL ON SCROLL === */
+(function () {
+  const reveals = document.querySelectorAll('.reveal');
+  const sections = document.querySelectorAll('.section');
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); } });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+  reveals.forEach(el => revealObserver.observe(el));
+
+  const sectionObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in-view'); });
+  }, { threshold: 0.15 });
+  sections.forEach(s => sectionObserver.observe(s));
+})();
+
+/* === THREE.JS: IRON ATOM === */
+(function () {
+  const container = document.getElementById('ironScene');
+  if (!container || typeof THREE === 'undefined') return;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
+  camera.position.z = 7;
+
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  container.appendChild(renderer.domElement);
+
+  const group = new THREE.Group();
+  scene.add(group);
+
+  // Nucleus: cluster of small spheres
+  const nucleusGroup = new THREE.Group();
+  const nucleusGeom = new THREE.SphereGeometry(0.25, 16, 16);
+  const protonMat = new THREE.MeshBasicMaterial({ color: 0xf4d76e });
+  const neutronMat = new THREE.MeshBasicMaterial({ color: 0xc9a84c });
+  for (let i = 0; i < 14; i++) {
+    const m = new THREE.Mesh(nucleusGeom, i % 2 === 0 ? protonMat : neutronMat);
+    const phi = Math.random() * Math.PI * 2;
+    const theta = Math.random() * Math.PI;
+    const r = 0.35;
+    m.position.set(r * Math.sin(theta) * Math.cos(phi), r * Math.sin(theta) * Math.sin(phi), r * Math.cos(theta));
+    nucleusGroup.add(m);
+  }
+  group.add(nucleusGroup);
+
+  // Nucleus glow
+  const glowGeom = new THREE.SphereGeometry(0.8, 32, 32);
+  const glowMat = new THREE.MeshBasicMaterial({ color: 0xc9a84c, transparent: true, opacity: 0.12 });
+  const glow = new THREE.Mesh(glowGeom, glowMat);
+  group.add(glow);
+
+  // Electron shells (wireframe tori at different angles)
+  const shellRadii = [1.6, 2.4, 3.2];
+  const shellTilts = [
+    { x: 0, y: 0, z: 0 },
+    { x: Math.PI / 3, y: Math.PI / 4, z: 0 },
+    { x: -Math.PI / 4, y: Math.PI / 6, z: Math.PI / 3 }
+  ];
+  const electrons = [];
+  shellRadii.forEach((r, i) => {
+    const shellGeom = new THREE.TorusGeometry(r, 0.005, 8, 100);
+    const shellMat = new THREE.MeshBasicMaterial({ color: 0xc9a84c, transparent: true, opacity: 0.35 });
+    const shell = new THREE.Mesh(shellGeom, shellMat);
+    shell.rotation.set(shellTilts[i].x, shellTilts[i].y, shellTilts[i].z);
+    group.add(shell);
+
+    // Electrons orbiting this shell
+    const electronCount = [2, 8, 14][i] > 4 ? 4 : [2, 8, 14][i];
+    for (let j = 0; j < electronCount; j++) {
+      const eGeom = new THREE.SphereGeometry(0.08, 12, 12);
+      const eMat = new THREE.MeshBasicMaterial({ color: 0xf4d76e });
+      const electron = new THREE.Mesh(eGeom, eMat);
+      const offset = (j / electronCount) * Math.PI * 2;
+      electrons.push({
+        mesh: electron,
+        radius: r,
+        speed: 0.4 + i * 0.15 + Math.random() * 0.1,
+        offset,
+        tilt: shellTilts[i]
+      });
+      shell.add(electron);
+    }
+  });
+
+  // Mouse tracking
+  let mouseX = 0, mouseY = 0, targetRotX = 0, targetRotY = 0;
+  container.addEventListener('mousemove', e => {
+    const rect = container.getBoundingClientRect();
+    mouseX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    mouseY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    targetRotY = mouseX * 0.6;
+    targetRotX = mouseY * -0.4;
+  });
+  container.addEventListener('mouseleave', () => { targetRotX = 0; targetRotY = 0; });
+
+  function animate(t) {
+    const time = t * 0.001;
+    group.rotation.x += (targetRotX - group.rotation.x) * 0.05;
+    group.rotation.y += (targetRotY - group.rotation.y + time * 0.15) * 0.02 + 0.002;
+    nucleusGroup.rotation.y += 0.005;
+    nucleusGroup.rotation.x += 0.003;
+
+    electrons.forEach(e => {
+      const angle = time * e.speed + e.offset;
+      e.mesh.position.set(Math.cos(angle) * e.radius, Math.sin(angle) * e.radius, 0);
+    });
+
+    glow.scale.setScalar(1 + Math.sin(time * 2) * 0.1);
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+  requestAnimationFrame(animate);
+
+  window.addEventListener('resize', () => {
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.clientWidth, container.clientHeight);
+  });
+})();
+
+/* === THREE.JS: ORBITAL SCENE === */
+(function () {
+  const container = document.getElementById('orbitScene');
+  if (!container || typeof THREE === 'undefined') return;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+  camera.position.set(0, 4, 9);
+  camera.lookAt(0, 0, 0);
+
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  container.appendChild(renderer.domElement);
+
+  const group = new THREE.Group();
+  scene.add(group);
+
+  // Central sun
+  const sunGeom = new THREE.SphereGeometry(0.6, 32, 32);
+  const sunMat = new THREE.MeshBasicMaterial({ color: 0xf4d76e });
+  const sun = new THREE.Mesh(sunGeom, sunMat);
+  group.add(sun);
+
+  // Sun glow
+  const sunGlow = new THREE.Mesh(new THREE.SphereGeometry(1.4, 32, 32), new THREE.MeshBasicMaterial({ color: 0xc9a84c, transparent: true, opacity: 0.15 }));
+  group.add(sunGlow);
+
+  const sunGlow2 = new THREE.Mesh(new THREE.SphereGeometry(2.2, 32, 32), new THREE.MeshBasicMaterial({ color: 0xc9a84c, transparent: true, opacity: 0.06 }));
+  group.add(sunGlow2);
+
+  // Orbits (wireframe ellipses at tilts)
+  const orbitData = [
+    { r: 2,  tilt: 0.05, speed: 0.7,  size: 0.13, color: 0xe8cc80 },
+    { r: 2.9, tilt: 0.18, speed: 0.5,  size: 0.18, color: 0xc9a84c },
+    { r: 3.8, tilt: -0.12, speed: 0.35, size: 0.16, color: 0xd4c9b5 },
+    { r: 4.7, tilt: 0.25, speed: 0.25, size: 0.22, color: 0xf4d76e }
+  ];
+  const bodies = [];
+  orbitData.forEach(o => {
+    // Orbit ring
+    const ringGeom = new THREE.RingGeometry(o.r - 0.005, o.r + 0.005, 128);
+    const ringMat = new THREE.MeshBasicMaterial({ color: 0xc9a84c, transparent: true, opacity: 0.25, side: THREE.DoubleSide });
+    const ring = new THREE.Mesh(ringGeom, ringMat);
+    ring.rotation.x = Math.PI / 2 + o.tilt;
+    group.add(ring);
+
+    // Body
+    const bGeom = new THREE.SphereGeometry(o.size, 24, 24);
+    const bMat = new THREE.MeshBasicMaterial({ color: o.color });
+    const body = new THREE.Mesh(bGeom, bMat);
+    bodies.push({ mesh: body, ring, radius: o.r, speed: o.speed, tilt: o.tilt, phase: Math.random() * Math.PI * 2 });
+    group.add(body);
+  });
+
+  // Background stars
+  const starGeom = new THREE.BufferGeometry();
+  const starPositions = [];
+  for (let i = 0; i < 200; i++) {
+    starPositions.push((Math.random() - 0.5) * 60, (Math.random() - 0.5) * 60, (Math.random() - 0.5) * 60);
+  }
+  starGeom.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
+  const starMat = new THREE.PointsMaterial({ color: 0xf0ead8, size: 0.04, transparent: true, opacity: 0.6 });
+  const stars = new THREE.Points(starGeom, starMat);
+  scene.add(stars);
+
+  // Mouse interaction
+  let mouseX = 0, mouseY = 0, targetRotX = 0.3, targetRotY = 0;
+  container.addEventListener('mousemove', e => {
+    const rect = container.getBoundingClientRect();
+    mouseX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    mouseY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    targetRotY = mouseX * 0.5;
+    targetRotX = 0.3 + mouseY * -0.3;
+  });
+  container.addEventListener('mouseleave', () => { targetRotX = 0.3; targetRotY = 0; });
+
+  function animate(t) {
+    const time = t * 0.001;
+    group.rotation.x += (targetRotX - group.rotation.x) * 0.04;
+    group.rotation.y += (targetRotY - group.rotation.y) * 0.04;
+    group.rotation.y += 0.001;
+
+    bodies.forEach(b => {
+      const a = time * b.speed + b.phase;
+      const x = Math.cos(a) * b.radius;
+      const z = Math.sin(a) * b.radius;
+      const y = Math.sin(a) * b.radius * Math.sin(b.tilt);
+      b.mesh.position.set(x, y, z);
+    });
+
+    sunGlow.scale.setScalar(1 + Math.sin(time * 1.5) * 0.05);
+    stars.rotation.y += 0.0003;
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+  requestAnimationFrame(animate);
+
+  window.addEventListener('resize', () => {
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.clientWidth, container.clientHeight);
+  });
+})();
+
+/* === REACTIVE DOT FIELD CONSTELLATION === */
+(function () {
+  const canvas = document.getElementById('dotField');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let dots = [];
+  let mouseX = -9999, mouseY = -9999;
+  const isMobile = window.matchMedia('(pointer: coarse)').matches;
+
+  function resize() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    const cols = Math.floor(canvas.width / 38);
+    const rows = Math.floor(canvas.height / 38);
+    const offX = (canvas.width - (cols - 1) * 38) / 2;
+    const offY = (canvas.height - (rows - 1) * 38) / 2;
+    dots = [];
+    for (let i = 0; i < cols; i++) {
+      for (let j = 0; j < rows; j++) {
+        dots.push({
+          ox: offX + i * 38,
+          oy: offY + j * 38,
+          x: offX + i * 38,
+          y: offY + j * 38,
+          vx: 0,
+          vy: 0,
+          r: 1.2 + Math.random() * 0.6
+        });
+      }
+    }
+  }
+
+  function getCanvasCoords(e) {
+    const rect = canvas.getBoundingClientRect();
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  }
+
+  canvas.addEventListener('mousemove', e => {
+    const c = getCanvasCoords(e);
+    mouseX = c.x; mouseY = c.y;
+  });
+  canvas.addEventListener('mouseleave', () => { mouseX = -9999; mouseY = -9999; });
+  canvas.addEventListener('touchmove', e => {
+    if (e.touches[0]) {
+      const c = getCanvasCoords(e.touches[0]);
+      mouseX = c.x; mouseY = c.y;
+    }
+  }, { passive: true });
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Update dots: repel from mouse, return to origin
+    dots.forEach(d => {
+      const dx = d.x - mouseX;
+      const dy = d.y - mouseY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const force = Math.max(0, 140 - dist) / 140;
+      if (force > 0) {
+        const angle = Math.atan2(dy, dx);
+        d.vx += Math.cos(angle) * force * 1.2;
+        d.vy += Math.sin(angle) * force * 1.2;
+      }
+      // Spring back to origin
+      d.vx += (d.ox - d.x) * 0.04;
+      d.vy += (d.oy - d.y) * 0.04;
+      // Damping
+      d.vx *= 0.82;
+      d.vy *= 0.82;
+      d.x += d.vx;
+      d.y += d.vy;
+    });
+
+    // Draw connecting lines for nearby dots
+    for (let i = 0; i < dots.length; i++) {
+      for (let j = i + 1; j < dots.length; j++) {
+        const a = dots[i], b = dots[j];
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 55) {
+          const alpha = (1 - dist / 55) * 0.18;
+          ctx.strokeStyle = `rgba(201, 168, 76, ${alpha})`;
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw dots
+    dots.forEach(d => {
+      const dx = d.x - mouseX;
+      const dy = d.y - mouseY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const near = Math.max(0, 200 - dist) / 200;
+      const alpha = 0.35 + near * 0.65;
+      const radius = d.r + near * 1.8;
+      ctx.fillStyle = `rgba(244, 215, 110, ${alpha})`;
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, radius, 0, Math.PI * 2);
+      ctx.fill();
+      if (near > 0.3) {
+        ctx.fillStyle = `rgba(244, 215, 110, ${near * 0.15})`;
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, radius * 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  draw();
+  window.addEventListener('resize', resize);
+})();
+(function () {
+  const bgs = document.querySelectorAll('.section-bg[data-bg]');
+  bgs.forEach(bg => {
+    bg.style.backgroundImage = `url('${bg.dataset.bg}')`;
+  });
+  let ticking = false;
+  function update() {
+    bgs.forEach(bg => {
+      const rect = bg.parentElement.getBoundingClientRect();
+      const speed = parseFloat(bg.dataset.speed) || 0.3;
+      const offset = rect.top * speed * -1;
+      bg.style.transform = `translate3d(0, ${offset}px, 0) scale(1.15)`;
+    });
+    ticking = false;
+  }
+  document.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(update);
+      ticking = true;
+    }
+  }, { passive: true });
+  update();
+})();
+</script>
+
+</body>
+</html>
