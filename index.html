@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Night Owl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Source+Sans+3:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #060810;
+  --bg-2: #0a0e18;
+  --moon: #e8d5a8;
+  --moon-bright: #f4e4b8;
+  --gold: #c9a84c;
+  --ink: #c4c1b8;
+  --ink-dim: #6b7180;
+  --ink-faint: #3a4050;
+  --white: #efe8d0;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 300;
+  line-height: 1.75;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Film grain */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9000;
+  opacity: 0.12;
+  mix-blend-mode: overlay;
+}
+
+/* Background gradient atmosphere */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(26, 33, 60, 0.4) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 70% 90%, rgba(40, 32, 24, 0.2) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+#stars {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* === HERO === */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  padding: 4rem 2rem;
+}
+
+.moon-wrap {
+  margin-bottom: 4rem;
+  opacity: 0;
+  animation: rise 1.6s 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  position: relative;
+}
+
+.moon-wrap::before {
+  content: '';
+  position: absolute;
+  inset: -60%;
+  background: radial-gradient(circle, rgba(232, 213, 168, 0.18) 0%, transparent 65%);
+  animation: glow 5s ease-in-out infinite;
+}
+
+.moon-svg {
+  width: 90px;
+  height: 90px;
+  display: block;
+  position: relative;
+  filter: drop-shadow(0 0 20px rgba(232, 213, 168, 0.4));
+}
+
+@keyframes glow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3.5rem, 11vw, 8rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--white);
+  line-height: 0.95;
+  margin-bottom: 1.8rem;
+  letter-spacing: -0.025em;
+  opacity: 0;
+  animation: rise 1.8s 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.05rem, 1.7vw, 1.3rem);
+  color: var(--moon);
+  font-style: italic;
+  letter-spacing: 0.02em;
+  max-width: 540px;
+  margin-bottom: 5rem;
+  opacity: 0;
+  animation: rise 1.8s 1.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.scroll-cue {
+  position: absolute;
+  bottom: 3.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--ink-dim);
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.55em;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  opacity: 0;
+  animation: rise 1s 1.8s forwards, breathe 3s 2.5s infinite;
+}
+
+.scroll-cue::after {
+  content: '';
+  width: 1px;
+  height: 36px;
+  background: linear-gradient(180deg, var(--moon), transparent);
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* === INTRO === */
+.intro {
+  padding: 9rem 2rem 6rem;
+  position: relative;
+  z-index: 1;
+}
+
+.intro-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.intro p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.25rem, 2vw, 1.7rem);
+  color: var(--ink);
+  font-style: italic;
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.intro p + p {
+  margin-top: 1.5rem;
+  color: var(--ink-dim);
+  font-size: 0.95em;
+}
+
+.divider-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 3rem auto 0;
+  color: var(--moon);
+  font-size: 0.6rem;
+  letter-spacing: 0.6em;
+  font-family: 'Cinzel', serif;
+  opacity: 0.7;
+}
+.divider-mark::before, .divider-mark::after {
+  content: '';
+  width: 40px;
+  height: 1px;
+  background: var(--moon);
+  margin: 0 1.5em;
+  opacity: 0.4;
+}
+
+/* === SECTION CARDS === */
+.sections-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 4rem 2rem 8rem;
+  position: relative;
+  z-index: 1;
+}
+
+.section-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  height: 520px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(232, 213, 168, 0.08);
+  transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--bg-2);
+}
+
+.section-card:hover {
+  border-color: rgba(232, 213, 168, 0.4);
+  transform: translateY(-6px);
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.7);
+}
+
+.section-card img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.55;
+  transition: opacity 0.8s, transform 1.2s;
+}
+
+.section-card:hover img {
+  opacity: 0.7;
+  transform: scale(1.06);
+}
+
+.section-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(6, 8, 16, 0.3) 0%, rgba(6, 8, 16, 0.75) 60%, rgba(6, 8, 16, 0.95) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.card-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 3rem;
+  z-index: 2;
+}
+
+.card-corner {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 28px;
+  height: 28px;
+  border-top: 1px solid var(--moon);
+  border-right: 1px solid var(--moon);
+  opacity: 0.5;
+  z-index: 2;
+  transition: opacity 0.5s, transform 0.5s;
+}
+
+.section-card:hover .card-corner {
+  opacity: 1;
+  transform: translate(4px, -4px);
+}
+
+.card-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.45em;
+  color: var(--moon);
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+.card-label::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--moon);
+}
+
+.card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  color: var(--white);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.05;
+  margin-bottom: 1.2rem;
+  letter-spacing: -0.01em;
+}
+
+.card-desc {
+  font-size: 0.95rem;
+  color: var(--ink);
+  line-height: 1.75;
+  margin-bottom: 2rem;
+  max-width: 92%;
+  font-weight: 300;
+}
+
+.card-cta {
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.35em;
+  color: var(--moon);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-weight: 500;
+}
+
+.card-cta::after {
+  content: '';
+  width: 32px;
+  height: 1px;
+  background: var(--moon);
+  transition: width 0.5s;
+}
+
+.section-card:hover .card-cta::after {
+  width: 58px;
+}
+
+/* === FOOTER === */
+footer {
+  padding: 4rem 2rem 3rem;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid rgba(232, 213, 168, 0.06);
+}
+
+.footer-mark {
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.5em;
+  color: var(--moon);
+  margin-bottom: 1rem;
+}
+
+footer p {
+  font-size: 0.85rem;
+  color: var(--ink-faint);
+  font-style: italic;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* === REVEAL ANIMATION === */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal.delay-1 { transition-delay: 0.15s; }
+.reveal.delay-2 { transition-delay: 0.3s; }
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .sections-grid { grid-template-columns: 1fr; padding: 3rem 1.2rem 5rem; }
+  .section-card { height: 420px; }
+  .card-content { padding: 2rem; }
+  .intro { padding: 5rem 1.2rem 3rem; }
+  .hero { padding: 3rem 1.2rem; }
+  .moon-wrap { margin-bottom: 2.5rem; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="moon-wrap">
+    <svg class="moon-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <mask id="crescentMask">
+          <rect width="100" height="100" fill="white"/>
+          <circle cx="62" cy="38" r="34" fill="black"/>
+        </mask>
+      </defs>
+      <circle cx="50" cy="50" r="32" fill="#e8d5a8" mask="url(#crescentMask)" />
+    </svg>
+  </div>
+
+  <h1>Night Owl</h1>
+  <p class="tagline">Notes from the quiet hours, when the world stops speaking and finally begins to be heard.</p>
+
+  <div class="scroll-cue">Enter</div>
+</section>
+
+<!-- INTRO -->
+<section class="intro">
+  <div class="intro-inner">
+    <p class="reveal">An anonymous space. A place to put down what cannot stay loose in the air.</p>
+    <p class="reveal delay-1">Long-form reflections written at night. Photographs taken in stolen moments. The thinking that happens when the noise dies down.</p>
+    <div class="divider-mark reveal delay-2">✦</div>
+  </div>
+</section>
+
+<!-- SECTION CARDS -->
+<section class="sections-grid">
+  <a href="reflections/" class="section-card reveal">
+    <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765?w=1400&q=85" alt="">
+    <div class="card-corner"></div>
+    <div class="card-content">
+      <div class="card-label">Section 01</div>
+      <h2 class="card-title">Reflections</h2>
+      <p class="card-desc">Essays on what the universe seems to know before we do. On meaning, scripture, science, morality, and the places where they refuse to stay separate.</p>
+      <div class="card-cta">Enter</div>
+    </div>
+  </a>
+
+  <a href="photography/" class="section-card reveal delay-1">
+    <img src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=1400&q=85" alt="">
+    <div class="card-corner"></div>
+    <div class="card-content">
+      <div class="card-label">Section 02</div>
+      <h2 class="card-title">Photography</h2>
+      <p class="card-desc">Frames from late streets, quiet mornings, and ordinary moments worth holding still. Mumbai, mostly. The world, occasionally.</p>
+      <div class="card-cta">View</div>
+    </div>
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-mark">✦ NIGHT OWL ✦</div>
+  <p>A personal space</p>
+</footer>
+
+<script>
+/* === STARFIELD === */
+(function () {
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const count = Math.floor((canvas.width * canvas.height) / 11000);
+    stars = [];
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 0.9 + 0.2,
+        a: Math.random() * 0.55 + 0.1,
+        da: (Math.random() - 0.5) * 0.008,
+        vx: (Math.random() - 0.5) * 0.04,
+        vy: (Math.random() - 0.5) * 0.04,
+        warm: Math.random() > 0.85
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => {
+      s.a += s.da;
+      if (s.a > 0.75) { s.a = 0.75; s.da = -s.da; }
+      if (s.a < 0.05) { s.a = 0.05; s.da = -s.da; }
+      s.x += s.vx;
+      s.y += s.vy;
+      if (s.x < 0) s.x = canvas.width;
+      if (s.x > canvas.width) s.x = 0;
+      if (s.y < 0) s.y = canvas.height;
+      if (s.y > canvas.height) s.y = 0;
+      const color = s.warm ? `rgba(244, 228, 184, ${s.a})` : `rgba(232, 230, 220, ${s.a})`;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+      if (s.r > 0.7) {
+        ctx.fillStyle = s.warm ? `rgba(244, 228, 184, ${s.a * 0.15})` : `rgba(232, 230, 220, ${s.a * 0.15})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r * 3.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+    requestAnimationFrame(draw);
+  }
+  resize();
+  draw();
+  window.addEventListener('resize', resize);
+})();
+
+/* === REVEAL ON SCROLL === */
+(function () {
+  const els = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+  els.forEach(el => obs.observe(el));
+})();
+</script>
+
+</body>
+</html>

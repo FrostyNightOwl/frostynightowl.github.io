@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photography — Night Owl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Source+Sans+3:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #000000;
+  --bg-2: #0a0a0a;
+  --white: #f5f0e8;
+  --cream: #d8d0bc;
+  --gold: #c9a84c;
+  --ink-dim: #888278;
+  --ink-faint: #4a4540;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 300;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* === TOP BAR === */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
+  mix-blend-mode: difference;
+}
+
+.home-link {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.4em;
+  color: var(--white);
+  text-decoration: none;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: opacity 0.4s;
+  opacity: 0.85;
+}
+.home-link::before {
+  content: '←';
+  transition: transform 0.4s;
+}
+.home-link:hover { opacity: 1; }
+.home-link:hover::before { transform: translateX(-4px); }
+
+.section-mark {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.45em;
+  color: var(--white);
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+/* Progress indicator */
+.progress {
+  position: fixed;
+  bottom: 2.5rem;
+  right: 2.5rem;
+  z-index: 50;
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  color: var(--white);
+  mix-blend-mode: difference;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.progress .current { font-size: 1.1rem; font-weight: 500; }
+.progress .total { opacity: 0.6; }
+.progress .slash { opacity: 0.4; }
+
+/* === COVER === */
+.cover {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  position: relative;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.cover-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.6em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5em;
+  opacity: 0;
+  animation: fade 1.4s 0.3s forwards;
+}
+.cover-label::before, .cover-label::after {
+  content: '';
+  width: 40px;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.6;
+}
+
+.cover h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3.5rem, 9vw, 7rem);
+  color: var(--white);
+  font-style: italic;
+  font-weight: 300;
+  line-height: 0.95;
+  margin-bottom: 2rem;
+  letter-spacing: -0.02em;
+  opacity: 0;
+  animation: fade 1.6s 0.8s forwards;
+}
+
+.cover-blurb {
+  max-width: 500px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  color: var(--cream);
+  font-style: italic;
+  line-height: 1.7;
+  margin-bottom: 4rem;
+  opacity: 0;
+  animation: fade 1.6s 1.2s forwards;
+}
+
+.cover-cue {
+  position: absolute;
+  bottom: 3rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.55em;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  opacity: 0;
+  animation: fade 1s 1.8s forwards, pulse 2.4s 2.5s infinite;
+}
+.cover-cue::after {
+  content: '';
+  width: 1px;
+  height: 28px;
+  background: linear-gradient(180deg, var(--ink-dim), transparent);
+}
+
+@keyframes fade { to { opacity: 1; } }
+@keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+/* === PHOTO FRAMES === */
+.frame {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  scroll-snap-align: start;
+  background: var(--bg);
+}
+
+.frame-img {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-2);
+}
+
+.frame-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.frame.in-view .frame-img img {
+  transform: scale(1.04);
+}
+
+.frame-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 60%, rgba(0, 0, 0, 0.4) 100%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+.frame.in-view .frame-img::after { opacity: 1; }
+
+.frame-caption {
+  width: 360px;
+  flex-shrink: 0;
+  padding: 4rem 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--bg);
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.caption-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.5rem;
+  color: var(--gold);
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1;
+  margin-bottom: 2rem;
+  letter-spacing: -0.02em;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s 0.3s, transform 1s 0.3s;
+}
+
+.caption-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  color: var(--white);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.15;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.01em;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s 0.5s, transform 1s 0.5s;
+}
+
+.caption-meta {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s 0.7s, transform 1s 0.7s;
+}
+
+.caption-meta span { color: var(--ink-dim); }
+
+.caption-meta .divider-tiny {
+  width: 24px;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.5;
+  margin: 0.3rem 0;
+}
+
+.caption-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  color: var(--cream);
+  font-style: italic;
+  line-height: 1.7;
+  font-weight: 300;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s 0.9s, transform 1s 0.9s;
+}
+
+.frame.in-view .caption-num,
+.frame.in-view .caption-title,
+.frame.in-view .caption-meta,
+.frame.in-view .caption-desc {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* === END CARD === */
+.end {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.end-mark {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.55em;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+}
+
+.end h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  color: var(--white);
+  font-style: italic;
+  font-weight: 300;
+  margin-bottom: 2rem;
+  max-width: 540px;
+  line-height: 1.4;
+}
+
+.end-link {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  text-decoration: none;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: gap 0.4s;
+}
+.end-link::after {
+  content: '→';
+  transition: transform 0.4s;
+}
+.end-link:hover { gap: 1.5rem; }
+.end-link:hover::after { transform: translateX(4px); }
+
+/* === RESPONSIVE === */
+@media (max-width: 900px) {
+  .frame { flex-direction: column; min-height: auto; }
+  .frame-img { min-height: 70vh; }
+  .frame-caption {
+    width: 100%;
+    padding: 2.5rem 1.5rem 3.5rem;
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .caption-num { font-size: 2.6rem; margin-bottom: 1.2rem; }
+  .caption-title { font-size: 1.5rem; }
+  .topbar { padding: 1rem 1.2rem; }
+  .progress { bottom: 1.5rem; right: 1.5rem; }
+  .cover { padding: 3rem 1.2rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../" class="home-link">Night Owl</a>
+  <div class="section-mark">✦ Section 02</div>
+</div>
+
+<div class="progress">
+  <span class="current" id="progCurrent">00</span>
+  <span class="slash">/</span>
+  <span class="total" id="progTotal">06</span>
+</div>
+
+<!-- COVER -->
+<section class="cover">
+  <div class="cover-label">Section 02</div>
+  <h1>Photography</h1>
+  <p class="cover-blurb">An editorial of moments. Frames from late streets, quiet rooms, and ordinary days that asked to be remembered.</p>
+  <div class="cover-cue">Scroll Through</div>
+</section>
+
+<!-- FRAMES -->
+<section class="frame" data-frame="01">
+  <div class="frame-img">
+    <img src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=2000&q=85" alt="">
+  </div>
+  <aside class="frame-caption">
+    <div class="caption-num">01</div>
+    <h2 class="caption-title">When the City Goes Quiet</h2>
+    <div class="caption-meta">
+      <span>Mumbai · 2024</span>
+      <div class="divider-tiny"></div>
+      <span>Bandra</span>
+    </div>
+    <p class="caption-desc">Around two in the morning, even Mumbai forgets to be loud. For a moment the city looks the way it must have looked before anyone arrived.</p>
+  </aside>
+</section>
+
+<section class="frame" data-frame="02">
+  <div class="frame-img">
+    <img src="https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=2000&q=85" alt="">
+  </div>
+  <aside class="frame-caption">
+    <div class="caption-num">02</div>
+    <h2 class="caption-title">Monsoon, Through Glass</h2>
+    <div class="caption-meta">
+      <span>Mumbai · 2024</span>
+      <div class="divider-tiny"></div>
+      <span>Indoors</span>
+    </div>
+    <p class="caption-desc">Some weeks the rain becomes the only thing that knows what it is doing.</p>
+  </aside>
+</section>
+
+<section class="frame" data-frame="03">
+  <div class="frame-img">
+    <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=2000&q=85" alt="">
+  </div>
+  <aside class="frame-caption">
+    <div class="caption-num">03</div>
+    <h2 class="caption-title">Alley, Just After Rain</h2>
+    <div class="caption-meta">
+      <span>Mumbai · 2024</span>
+      <div class="divider-tiny"></div>
+      <span>South Bombay</span>
+    </div>
+    <p class="caption-desc">The reflections were better than the street itself. Everything important was upside down.</p>
+  </aside>
+</section>
+
+<section class="frame" data-frame="04">
+  <div class="frame-img">
+    <img src="https://images.unsplash.com/photo-1502136969935-8d8eef54d77b?w=2000&q=85" alt="">
+  </div>
+  <aside class="frame-caption">
+    <div class="caption-num">04</div>
+    <h2 class="caption-title">A Person, A Threshold</h2>
+    <div class="caption-meta">
+      <span>Undated</span>
+      <div class="divider-tiny"></div>
+      <span>Found Moment</span>
+    </div>
+    <p class="caption-desc">Sometimes a stranger becomes the most honest thing in the frame, precisely because they did not know they were in it.</p>
+  </aside>
+</section>
+
+<section class="frame" data-frame="05">
+  <div class="frame-img">
+    <img src="https://images.unsplash.com/photo-1519181245277-cffeb31da2e3?w=2000&q=85" alt="">
+  </div>
+  <aside class="frame-caption">
+    <div class="caption-num">05</div>
+    <h2 class="caption-title">Architecture of an Afternoon</h2>
+    <div class="caption-meta">
+      <span>Mumbai · 2024</span>
+      <div class="divider-tiny"></div>
+      <span>Fort</span>
+    </div>
+    <p class="caption-desc">Light arrived at the wall the way an old letter arrives. Slowly, and without explaining itself.</p>
+  </aside>
+</section>
+
+<section class="frame" data-frame="06">
+  <div class="frame-img">
+    <img src="https://images.unsplash.com/photo-1471341971476-ae15ff5dd4ea?w=2000&q=85" alt="">
+  </div>
+  <aside class="frame-caption">
+    <div class="caption-num">06</div>
+    <h2 class="caption-title">Where the Light Refused</h2>
+    <div class="caption-meta">
+      <span>Western Ghats · 2023</span>
+      <div class="divider-tiny"></div>
+      <span>Twilight</span>
+    </div>
+    <p class="caption-desc">The hour the photographers call blue, that everyone else just calls late.</p>
+  </aside>
+</section>
+
+<!-- END -->
+<section class="end">
+  <div class="end-mark">✦ END OF SERIES ✦</div>
+  <h2>More frames in the dark room, waiting their turn.</h2>
+  <a href="../" class="end-link">Return to Night Owl</a>
+</section>
+
+<script>
+(function () {
+  const frames = document.querySelectorAll('.frame');
+  const current = document.getElementById('progCurrent');
+  const total = document.getElementById('progTotal');
+  total.textContent = String(frames.length).padStart(2, '0');
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in-view');
+        const num = e.target.dataset.frame;
+        if (num) current.textContent = num;
+      }
+    });
+  }, { threshold: 0.4 });
+  frames.forEach(f => obs.observe(f));
+})();
+</script>
+
+</body>
+</html>

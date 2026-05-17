@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reflections — Night Owl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Source+Sans+3:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0908;
+  --bg-2: #12100d;
+  --gold: #c9a84c;
+  --gold-light: #e8cc80;
+  --gold-bright: #f4d76e;
+  --gold-dim: #7a6030;
+  --ink: #d4c9b5;
+  --ink-dim: #8a8273;
+  --ink-faint: #4a4438;
+  --white: #f0ead8;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 300;
+  line-height: 1.8;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Subtle paper texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9000;
+  opacity: 0.1;
+  mix-blend-mode: overlay;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(201, 168, 76, 0.06) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* === TOP BAR === */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1.4rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  background: linear-gradient(180deg, var(--bg) 0%, rgba(10, 9, 8, 0.7) 70%, transparent 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.home-link {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.4em;
+  color: var(--ink-dim);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.4s;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.home-link::before {
+  content: '←';
+  color: var(--gold);
+  transition: transform 0.4s;
+}
+.home-link:hover { color: var(--gold-bright); }
+.home-link:hover::before { transform: translateX(-4px); }
+
+.section-mark {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+/* === HERO === */
+.hero {
+  padding: 14rem 2rem 8rem;
+  text-align: center;
+  position: relative;
+}
+
+.hero-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.55em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5em;
+}
+.hero-label::before, .hero-label::after {
+  content: '';
+  width: 38px;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.6;
+}
+
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3.5rem, 9vw, 7rem);
+  color: var(--white);
+  font-style: italic;
+  font-weight: 300;
+  line-height: 0.95;
+  margin-bottom: 2rem;
+  letter-spacing: -0.02em;
+}
+
+.hero-blurb {
+  max-width: 580px;
+  margin: 0 auto;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.25rem;
+  color: var(--ink);
+  font-style: italic;
+  line-height: 1.7;
+}
+
+.hero-ornament {
+  margin: 3.5rem auto 0;
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 0 12px var(--gold);
+}
+.hero-ornament::before, .hero-ornament::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.hero-ornament::before { right: 100%; margin-right: 1rem; }
+.hero-ornament::after { left: 100%; margin-left: 1rem; }
+
+/* === PIECES LIST === */
+.pieces {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 4rem 2rem 8rem;
+}
+
+.piece {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 3rem;
+  padding: 4rem 0;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.12);
+  align-items: start;
+  position: relative;
+  transition: transform 0.5s;
+}
+
+.piece:first-child { padding-top: 2rem; }
+.piece:last-child { border-bottom: none; }
+
+.piece-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem;
+  color: var(--gold);
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  padding-top: 0.4rem;
+  position: relative;
+}
+.piece-num::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -1.5rem;
+  width: 1px;
+  height: 60%;
+  background: rgba(201, 168, 76, 0.25);
+  transform: translateY(-50%);
+}
+
+.piece-tags {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.35em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.piece-tags .dot {
+  color: var(--ink-faint);
+  letter-spacing: 0;
+}
+
+.piece-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  color: var(--white);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.15;
+  margin-bottom: 1.4rem;
+  letter-spacing: -0.01em;
+  transition: color 0.5s;
+}
+
+.piece-link { text-decoration: none; color: inherit; display: block; }
+.piece-link:hover .piece-title { color: var(--gold-light); }
+
+.piece-desc {
+  font-size: 1rem;
+  color: var(--ink);
+  line-height: 1.85;
+  margin-bottom: 1.8rem;
+  max-width: 640px;
+  font-weight: 300;
+}
+
+.piece-meta {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.piece-meta .arrow {
+  width: 32px;
+  height: 1px;
+  background: var(--gold);
+  transition: width 0.5s;
+}
+.piece-link:hover .arrow { width: 56px; }
+
+.piece-date {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  margin-left: auto;
+}
+
+/* === COMING SOON / PLACEHOLDER === */
+.placeholder {
+  padding: 3rem 0;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 3rem;
+  opacity: 0.4;
+}
+.placeholder:last-child { border-bottom: none; }
+
+.placeholder .piece-num {
+  color: var(--ink-faint);
+  font-size: 2.2rem;
+}
+.placeholder .piece-num::after { display: none; }
+
+.placeholder-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  color: var(--ink-dim);
+  font-style: italic;
+  font-weight: 300;
+  margin-bottom: 0.5rem;
+}
+
+.placeholder-note {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.35em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+}
+
+/* === FOOTER === */
+footer {
+  padding: 4rem 2rem 3rem;
+  text-align: center;
+  border-top: 1px solid rgba(201, 168, 76, 0.08);
+  position: relative;
+}
+
+.footer-mark {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.5em;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+
+footer a {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  color: var(--ink-dim);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.4s;
+}
+footer a:hover { color: var(--gold-light); }
+
+/* === REVEAL === */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal.delay-1 { transition-delay: 0.15s; }
+.reveal.delay-2 { transition-delay: 0.3s; }
+
+@media (max-width: 768px) {
+  .topbar { padding: 1rem 1.2rem; }
+  .hero { padding: 9rem 1.2rem 5rem; }
+  .pieces { padding: 2rem 1.2rem 5rem; }
+  .piece, .placeholder { grid-template-columns: 1fr; gap: 1rem; }
+  .piece-num { font-size: 2.2rem; }
+  .piece-num::after { display: none; }
+  .piece-meta { flex-wrap: wrap; }
+  .piece-date { margin-left: 0; width: 100%; margin-top: 0.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../" class="home-link">Night Owl</a>
+  <div class="section-mark">✦ Section 01</div>
+</div>
+
+<header class="hero">
+  <div class="hero-label">Section 01</div>
+  <h1>Reflections</h1>
+  <p class="hero-blurb">A small library of essays written for no one in particular. On the places where scripture and science, doubt and certainty, the visible and the hidden, refuse to stay on their own sides of the line.</p>
+  <div class="hero-ornament"></div>
+</header>
+
+<main class="pieces">
+
+  <article class="piece reveal">
+    <div class="piece-num">01</div>
+    <a href="quran-universe.html" class="piece-link">
+      <div class="piece-tags">
+        <span>Scripture</span>
+        <span class="dot">·</span>
+        <span>Science</span>
+        <span class="dot">·</span>
+        <span>Cosmology</span>
+      </div>
+      <h2 class="piece-title">The Quran &amp; What the Universe Already Knew</h2>
+      <p class="piece-desc">A seventh-century desert. No telescopes. No microscopes. No oceanography. And yet the words spoken there describe what science would not glimpse for a thousand years. Ten verses, examined in light of the discoveries that followed. The expansion of the heavens. Embryonic morphology. The barrier between two seas. Iron forged in dying stars. The reflected light of the moon. And the rational conclusion this evidence asks of an honest mind.</p>
+      <div class="piece-meta">
+        <span>Read</span>
+        <span class="arrow"></span>
+        <span class="piece-date">A Long Read</span>
+      </div>
+    </a>
+  </article>
+
+  <div class="placeholder reveal delay-1">
+    <div class="piece-num">02</div>
+    <div>
+      <div class="placeholder-title">Forthcoming</div>
+      <div class="placeholder-note">In Draft</div>
+    </div>
+  </div>
+
+  <div class="placeholder reveal delay-2">
+    <div class="piece-num">03</div>
+    <div>
+      <div class="placeholder-title">Forthcoming</div>
+      <div class="placeholder-note">In Draft</div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-mark">✦ NIGHT OWL ✦</div>
+  <a href="../">Return Home</a>
+</footer>
+
+<script>
+(function () {
+  const els = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+  els.forEach(el => obs.observe(el));
+})();
+</script>
+
+</body>
+</html>
