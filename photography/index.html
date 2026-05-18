@@ -6,20 +6,23 @@
 <title>Photography — Night Owl</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Source+Sans+3:wght@200;300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Source+Sans+3:wght@200;300;400&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #000000;
   --bg-2: #0a0a0a;
+  --bg-3: #141414;
   --white: #f5f0e8;
   --cream: #d8d0bc;
   --gold: #c9a84c;
+  --gold-light: #e8cc80;
+  --ink: #c4c1b8;
   --ink-dim: #888278;
   --ink-faint: #4a4540;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html, body { height: 100%; overflow: hidden; }
 
 body {
   background: var(--bg);
@@ -27,10 +30,31 @@ body {
   font-family: 'Source Sans 3', sans-serif;
   font-weight: 300;
   line-height: 1.7;
-  overflow-x: hidden;
+  position: relative;
+  overscroll-behavior: none;
 }
 
-/* === TOP BAR === */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.7) 90%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.08;
+  mix-blend-mode: overlay;
+}
+
+/* TOP BAR */
 .topbar {
   position: fixed;
   top: 0;
@@ -40,9 +64,10 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 100;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
-  mix-blend-mode: difference;
+  z-index: 50;
+  background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, transparent 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .home-link {
@@ -55,206 +80,146 @@ body {
   display: flex;
   align-items: center;
   gap: 1rem;
-  transition: opacity 0.4s;
+  transition: color 0.4s;
   opacity: 0.85;
 }
 .home-link::before {
   content: '←';
+  color: var(--gold);
   transition: transform 0.4s;
 }
-.home-link:hover { opacity: 1; }
+.home-link:hover { opacity: 1; color: var(--gold-light); }
 .home-link:hover::before { transform: translateX(-4px); }
 
 .section-mark {
   font-family: 'Cinzel', serif;
   font-size: 0.65rem;
   letter-spacing: 0.45em;
-  color: var(--white);
-  text-transform: uppercase;
-  opacity: 0.7;
-}
-
-/* Progress indicator */
-.progress {
-  position: fixed;
-  bottom: 2.5rem;
-  right: 2.5rem;
-  z-index: 50;
-  font-family: 'Cinzel', serif;
-  font-size: 0.7rem;
-  letter-spacing: 0.35em;
-  color: var(--white);
-  mix-blend-mode: difference;
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-}
-.progress .current { font-size: 1.1rem; font-weight: 500; }
-.progress .total { opacity: 0.6; }
-.progress .slash { opacity: 0.4; }
-
-/* === COVER === */
-.cover {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 4rem 2rem;
-  position: relative;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.cover-label {
-  font-family: 'Cinzel', serif;
-  font-size: 0.7rem;
-  letter-spacing: 0.6em;
   color: var(--gold);
   text-transform: uppercase;
-  margin-bottom: 2.5rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 1.5em;
-  opacity: 0;
-  animation: fade 1.4s 0.3s forwards;
-}
-.cover-label::before, .cover-label::after {
-  content: '';
-  width: 40px;
-  height: 1px;
-  background: var(--gold);
-  opacity: 0.6;
+  opacity: 0.85;
 }
 
-.cover h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(3.5rem, 9vw, 7rem);
-  color: var(--white);
-  font-style: italic;
-  font-weight: 300;
-  line-height: 0.95;
-  margin-bottom: 2rem;
-  letter-spacing: -0.02em;
-  opacity: 0;
-  animation: fade 1.6s 0.8s forwards;
-}
-
-.cover-blurb {
-  max-width: 500px;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.2rem;
-  color: var(--cream);
-  font-style: italic;
-  line-height: 1.7;
-  margin-bottom: 4rem;
-  opacity: 0;
-  animation: fade 1.6s 1.2s forwards;
-}
-
-.cover-cue {
-  position: absolute;
-  bottom: 3rem;
-  font-family: 'Cinzel', serif;
-  font-size: 0.6rem;
-  letter-spacing: 0.55em;
-  color: var(--ink-dim);
-  text-transform: uppercase;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.8rem;
-  opacity: 0;
-  animation: fade 1s 1.8s forwards, pulse 2.4s 2.5s infinite;
-}
-.cover-cue::after {
-  content: '';
-  width: 1px;
-  height: 28px;
-  background: linear-gradient(180deg, var(--ink-dim), transparent);
-}
-
-@keyframes fade { to { opacity: 1; } }
-@keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-
-/* === PHOTO FRAMES === */
-.frame {
-  min-height: 100vh;
+/* STAGE */
+.stage {
   position: relative;
+  width: 100vw;
+  height: 100vh;
   display: flex;
-  align-items: stretch;
-  scroll-snap-align: start;
-  background: var(--bg);
-}
-
-.frame-img {
-  flex: 1;
-  position: relative;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-  background: var(--bg-2);
+  z-index: 3;
 }
 
-.frame-img img {
+.carousel {
+  position: absolute;
+  inset: 0;
+}
+
+.photo-item {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(320px, 42vw, 720px);
+  height: clamp(280px, 62vh, 720px);
+  transform: translate(-50%, -50%);
+  transition:
+    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  will-change: transform, opacity, filter;
+  opacity: 0;
+}
+
+.photo-frame {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-2);
+  overflow: hidden;
+  box-shadow:
+    0 30px 60px -20px rgba(0,0,0,0.9),
+    0 0 0 1px rgba(255,255,255,0.04);
+}
+
+.photo-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.frame.in-view .frame-img img {
-  transform: scale(1.04);
-}
-
-.frame-img::after {
-  content: '';
+.photo-glow {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent 60%, rgba(0, 0, 0, 0.4) 100%);
+  inset: -2px;
+  border: 1px solid transparent;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 1s;
+  transition: border-color 0.5s, box-shadow 0.5s;
 }
+.photo-item.is-center .photo-glow {
+  border-color: rgba(201, 168, 76, 0.25);
+  box-shadow: 0 0 80px -10px rgba(201, 168, 76, 0.2);
+}
+.photo-item.is-center { cursor: zoom-in; }
 
-.frame.in-view .frame-img::after { opacity: 1; }
+.photo-item img.loaded { animation: imgFadeIn 0.6s ease; }
+@keyframes imgFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-.frame-caption {
-  width: 360px;
-  flex-shrink: 0;
-  padding: 4rem 3rem;
+/* NAV ARROWS */
+.nav-arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--white);
+  cursor: pointer;
+  z-index: 40;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  background: var(--bg);
-  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  opacity: 0.55;
+  transition: all 0.4s;
 }
+.nav-arrow:hover:not(:disabled) {
+  opacity: 1;
+  border-color: rgba(201, 168, 76, 0.5);
+  background: rgba(201, 168, 76, 0.12);
+  transform: translateY(-50%) scale(1.05);
+}
+.nav-arrow:disabled { opacity: 0.15; cursor: not-allowed; }
+.nav-prev { left: 2rem; }
+.nav-next { right: 2rem; }
+.nav-arrow svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5; }
 
-.caption-num {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3.5rem;
-  color: var(--gold);
-  font-style: italic;
-  font-weight: 300;
-  line-height: 1;
-  margin-bottom: 2rem;
-  letter-spacing: -0.02em;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 1s 0.3s, transform 1s 0.3s;
+/* CAPTION & COUNTER */
+.caption {
+  position: fixed;
+  bottom: 7.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 30;
+  pointer-events: none;
+  max-width: min(640px, 80vw);
+  padding: 0 1rem;
 }
 
 .caption-title {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  color: var(--white);
+  font-size: clamp(1.2rem, 2vw, 1.7rem);
   font-style: italic;
+  color: var(--white);
+  margin-bottom: 0.6rem;
   font-weight: 400;
-  line-height: 1.15;
-  margin-bottom: 1.5rem;
+  line-height: 1.3;
   letter-spacing: -0.01em;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 1s 0.5s, transform 1s 0.5s;
+  transition: opacity 0.4s;
 }
 
 .caption-meta {
@@ -263,110 +228,220 @@ body {
   letter-spacing: 0.4em;
   color: var(--gold);
   text-transform: uppercase;
-  margin-bottom: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 1s 0.7s, transform 1s 0.7s;
+  transition: opacity 0.4s;
 }
+.caption.fading .caption-title,
+.caption.fading .caption-meta { opacity: 0; }
 
-.caption-meta span { color: var(--ink-dim); }
-
-.caption-meta .divider-tiny {
-  width: 24px;
-  height: 1px;
-  background: var(--gold);
-  opacity: 0.5;
-  margin: 0.3rem 0;
-}
-
-.caption-desc {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.05rem;
-  color: var(--cream);
-  font-style: italic;
-  line-height: 1.7;
-  font-weight: 300;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 1s 0.9s, transform 1s 0.9s;
-}
-
-.frame.in-view .caption-num,
-.frame.in-view .caption-title,
-.frame.in-view .caption-meta,
-.frame.in-view .caption-desc {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* === END CARD === */
-.end {
-  min-height: 60vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 4rem 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.end-mark {
-  font-family: 'Cinzel', serif;
-  font-size: 0.7rem;
-  letter-spacing: 0.55em;
-  color: var(--gold);
-  margin-bottom: 1.5rem;
-}
-
-.end h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.6rem, 3vw, 2.4rem);
-  color: var(--white);
-  font-style: italic;
-  font-weight: 300;
-  margin-bottom: 2rem;
-  max-width: 540px;
-  line-height: 1.4;
-}
-
-.end-link {
+.counter {
+  position: fixed;
+  bottom: 3.5rem;
+  left: 50%;
+  transform: translateX(-50%);
   font-family: 'Cinzel', serif;
   font-size: 0.7rem;
   letter-spacing: 0.4em;
-  color: var(--gold);
-  text-decoration: none;
-  text-transform: uppercase;
+  color: var(--white);
+  z-index: 30;
   display: flex;
   align-items: center;
   gap: 1rem;
-  transition: gap 0.4s;
 }
-.end-link::after {
-  content: '→';
-  transition: transform 0.4s;
-}
-.end-link:hover { gap: 1.5rem; }
-.end-link:hover::after { transform: translateX(4px); }
+.counter .current { font-size: 1.05rem; color: var(--gold); font-weight: 500; }
+.counter .total { opacity: 0.6; }
+.counter .slash { opacity: 0.35; }
 
-/* === RESPONSIVE === */
+.hint {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.45em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  z-index: 30;
+  white-space: nowrap;
+}
+
+/* LIGHTBOX */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease, visibility 0s 0.6s;
+}
+.lightbox.active {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.6s ease, visibility 0s;
+}
+
+.lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(24px) saturate(0.6);
+  -webkit-backdrop-filter: blur(24px) saturate(0.6);
+  cursor: zoom-out;
+}
+
+.lightbox-content {
+  position: relative;
+  width: clamp(360px, 42vw, 760px);
+  max-height: 90vh;
+  background: var(--bg-2);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  box-shadow:
+    0 50px 100px -30px rgba(0,0,0,0.9),
+    0 0 80px -20px rgba(201, 168, 76, 0.15);
+  transform: scale(0.92) translateY(20px);
+  opacity: 0;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.lightbox.active .lightbox-content {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+.lightbox-image-wrap {
+  position: relative;
+  width: 100%;
+  background: #000;
+  overflow: hidden;
+  flex: 0 0 auto;
+}
+
+.lightbox-image {
+  width: 100%;
+  height: auto;
+  max-height: 60vh;
+  object-fit: contain;
+  display: block;
+}
+
+.lightbox-info {
+  padding: 1.8rem 2rem 2rem;
+  border-top: 1px solid rgba(201, 168, 76, 0.08);
+  flex: 0 0 auto;
+}
+
+.lightbox-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  color: var(--gold);
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.4rem;
+  line-height: 1;
+}
+
+.lightbox-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.3rem, 2vw, 1.7rem);
+  color: var(--white);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 0.9rem;
+  letter-spacing: -0.01em;
+}
+
+.lightbox-meta {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+}
+
+.lightbox-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--cream);
+  font-size: 1.02rem;
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--white);
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  transition: all 0.3s;
+  padding: 0;
+}
+.lightbox-close:hover {
+  border-color: var(--gold);
+  background: var(--gold);
+  color: var(--bg);
+  transform: rotate(90deg);
+}
+.lightbox-close svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--white);
+  cursor: pointer;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  opacity: 0.7;
+}
+.lightbox-nav:hover { opacity: 1; border-color: var(--gold); background: rgba(201, 168, 76, 0.2); }
+.lightbox-prev { left: 0.8rem; }
+.lightbox-next { right: 0.8rem; }
+.lightbox-nav svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+
+/* RESPONSIVE */
 @media (max-width: 900px) {
-  .frame { flex-direction: column; min-height: auto; }
-  .frame-img { min-height: 70vh; }
-  .frame-caption {
-    width: 100%;
-    padding: 2.5rem 1.5rem 3.5rem;
-    border-left: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-  }
-  .caption-num { font-size: 2.6rem; margin-bottom: 1.2rem; }
-  .caption-title { font-size: 1.5rem; }
   .topbar { padding: 1rem 1.2rem; }
-  .progress { bottom: 1.5rem; right: 1.5rem; }
-  .cover { padding: 3rem 1.2rem; }
+  .nav-arrow { width: 42px; height: 42px; }
+  .nav-prev { left: 0.8rem; }
+  .nav-next { right: 0.8rem; }
+  .photo-item { width: clamp(260px, 80vw, 600px); height: clamp(240px, 55vh, 500px); }
+  .caption { bottom: 6rem; }
+  .counter { bottom: 2.5rem; }
+  .hint { font-size: 0.5rem; letter-spacing: 0.3em; }
+  .lightbox-content { width: 90vw; max-height: 88vh; }
+  .lightbox-info { padding: 1.2rem 1.4rem 1.6rem; }
+}
+@media (max-width: 480px) {
+  .hint { display: none; }
+  .section-mark { display: none; }
 }
 </style>
 </head>
@@ -377,142 +452,296 @@ body {
   <div class="section-mark">✦ Section 02</div>
 </div>
 
-<div class="progress">
-  <span class="current" id="progCurrent">00</span>
-  <span class="slash">/</span>
-  <span class="total" id="progTotal">06</span>
+<main class="stage">
+  <div class="carousel" id="carousel"></div>
+
+  <button class="nav-arrow nav-prev" id="navPrev" aria-label="Previous photo">
+    <svg viewBox="0 0 24 24"><polyline points="15 6 9 12 15 18"></polyline></svg>
+  </button>
+  <button class="nav-arrow nav-next" id="navNext" aria-label="Next photo">
+    <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
+  </button>
+
+  <div class="caption" id="caption">
+    <h2 class="caption-title" id="captionTitle"></h2>
+    <div class="caption-meta" id="captionMeta"></div>
+  </div>
+
+  <div class="counter">
+    <span class="current" id="counterCurrent">01</span>
+    <span class="slash">/</span>
+    <span class="total" id="counterTotal">00</span>
+  </div>
+
+  <div class="hint">Click image to view · Scroll, swipe, or use arrow keys</div>
+</main>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <div class="lightbox-backdrop" id="lightboxBackdrop"></div>
+  <div class="lightbox-content">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Close">
+      <svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg>
+    </button>
+    <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous">
+      <svg viewBox="0 0 24 24"><polyline points="15 6 9 12 15 18"></polyline></svg>
+    </button>
+    <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next">
+      <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
+    </button>
+    <div class="lightbox-image-wrap">
+      <img class="lightbox-image" id="lightboxImage" alt="">
+    </div>
+    <div class="lightbox-info">
+      <div class="lightbox-num" id="lightboxNum"></div>
+      <h2 class="lightbox-title" id="lightboxTitle"></h2>
+      <div class="lightbox-meta" id="lightboxMeta"></div>
+      <p class="lightbox-desc" id="lightboxDesc"></p>
+    </div>
+  </div>
 </div>
 
-<!-- COVER -->
-<section class="cover">
-  <div class="cover-label">Section 02</div>
-  <h1>Photography</h1>
-  <p class="cover-blurb">An editorial of moments. Frames from late streets, quiet rooms, and ordinary days that asked to be remembered.</p>
-  <div class="cover-cue">Scroll Through</div>
-</section>
-
-<!-- FRAMES -->
-<section class="frame" data-frame="01">
-  <div class="frame-img">
-    <img src="images/daysgone.png" alt="">
-  </div>
-  <aside class="frame-caption">
-    <div class="caption-num">01</div>
-    <h2 class="caption-title">When the City Goes Quiet</h2>
-    <div class="caption-meta">
-      <span>Mumbai · 2024</span>
-      <div class="divider-tiny"></div>
-      <span>Bandra</span>
-    </div>
-    <p class="caption-desc">Around two in the morning, even Mumbai forgets to be loud. For a moment the city looks the way it must have looked before anyone arrived.</p>
-  </aside>
-</section>
-
-<section class="frame" data-frame="02">
-  <div class="frame-img">
-    <img src="https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=2000&q=85" alt="">
-  </div>
-  <aside class="frame-caption">
-    <div class="caption-num">02</div>
-    <h2 class="caption-title">Monsoon, Through Glass</h2>
-    <div class="caption-meta">
-      <span>Mumbai · 2024</span>
-      <div class="divider-tiny"></div>
-      <span>Indoors</span>
-    </div>
-    <p class="caption-desc">Some weeks the rain becomes the only thing that knows what it is doing.</p>
-  </aside>
-</section>
-
-<section class="frame" data-frame="03">
-  <div class="frame-img">
-    <img src="images/beach_pixel.png" alt="">
-  </div>
-  <aside class="frame-caption">
-    <div class="caption-num">03</div>
-    <h2 class="caption-title">Alley, Just After Rain</h2>
-    <div class="caption-meta">
-      <span>Mumbai · 2024</span>
-      <div class="divider-tiny"></div>
-      <span>South Bombay</span>
-    </div>
-    <p class="caption-desc">The reflections were better than the street itself. Everything important was upside down.</p>
-  </aside>
-</section>
-
-<section class="frame" data-frame="04">
-  <div class="frame-img">
-    <img src="https://images.unsplash.com/photo-1502136969935-8d8eef54d77b?w=2000&q=85" alt="">
-  </div>
-  <aside class="frame-caption">
-    <div class="caption-num">04</div>
-    <h2 class="caption-title">A Person, A Threshold</h2>
-    <div class="caption-meta">
-      <span>Undated</span>
-      <div class="divider-tiny"></div>
-      <span>Found Moment</span>
-    </div>
-    <p class="caption-desc">Sometimes a stranger becomes the most honest thing in the frame, precisely because they did not know they were in it.</p>
-  </aside>
-</section>
-
-<section class="frame" data-frame="05">
-  <div class="frame-img">
-    <img src="https://images.unsplash.com/photo-1519181245277-cffeb31da2e3?w=2000&q=85" alt="">
-  </div>
-  <aside class="frame-caption">
-    <div class="caption-num">05</div>
-    <h2 class="caption-title">Architecture of an Afternoon</h2>
-    <div class="caption-meta">
-      <span>Mumbai · 2024</span>
-      <div class="divider-tiny"></div>
-      <span>Fort</span>
-    </div>
-    <p class="caption-desc">Light arrived at the wall the way an old letter arrives. Slowly, and without explaining itself.</p>
-  </aside>
-</section>
-
-<section class="frame" data-frame="06">
-  <div class="frame-img">
-    <img src="https://images.unsplash.com/photo-1471341971476-ae15ff5dd4ea?w=2000&q=85" alt="">
-  </div>
-  <aside class="frame-caption">
-    <div class="caption-num">06</div>
-    <h2 class="caption-title">Where the Light Refused</h2>
-    <div class="caption-meta">
-      <span>Western Ghats · 2023</span>
-      <div class="divider-tiny"></div>
-      <span>Twilight</span>
-    </div>
-    <p class="caption-desc">The hour the photographers call blue, that everyone else just calls late.</p>
-  </aside>
-</section>
-
-<!-- END -->
-<section class="end">
-  <div class="end-mark">✦ END OF SERIES ✦</div>
-  <h2>More frames in the dark room, waiting their turn.</h2>
-  <a href="../" class="end-link">Return to Night Owl</a>
-</section>
-
 <script>
-(function () {
-  const frames = document.querySelectorAll('.frame');
-  const current = document.getElementById('progCurrent');
-  const total = document.getElementById('progTotal');
-  total.textContent = String(frames.length).padStart(2, '0');
+/* =====================================================================
+   PHOTOS — Edit this array to add, remove, or reorder your photos.
+   Each entry needs at minimum 'src'. Title, meta, and desc are optional.
+   src is the path to your image, relative to this HTML file.
+   ===================================================================== */
+const photos = [
+  {
+    src: 'images/photo01.jpg',
+    title: 'When the City Goes Quiet',
+    meta: 'Mumbai · 2024 · Bandra',
+    desc: 'Around two in the morning, even Mumbai forgets to be loud. For a moment the city looks the way it must have looked before anyone arrived.'
+  },
+  {
+    src: 'images/photo02.jpg',
+    title: 'Monsoon, Through Glass',
+    meta: 'Mumbai · 2024',
+    desc: 'Some weeks the rain becomes the only thing that knows what it is doing.'
+  },
+  {
+    src: 'images/photo03.jpg',
+    title: 'Alley, Just After Rain',
+    meta: 'Mumbai · 2024 · South Bombay',
+    desc: 'The reflections were better than the street itself. Everything important was upside down.'
+  },
+  {
+    src: 'images/photo04.jpg',
+    title: 'A Person, A Threshold',
+    meta: 'Undated · Found Moment',
+    desc: 'Sometimes a stranger becomes the most honest thing in the frame, precisely because they did not know they were in it.'
+  },
+  {
+    src: 'images/photo05.jpg',
+    title: 'Architecture of an Afternoon',
+    meta: 'Mumbai · 2024 · Fort',
+    desc: 'Light arrived at the wall the way an old letter arrives. Slowly, and without explaining itself.'
+  },
+  {
+    src: 'images/photo06.jpg',
+    title: 'Where the Light Refused',
+    meta: 'Western Ghats · 2023 · Twilight',
+    desc: 'The hour the photographers call blue, that everyone else just calls late.'
+  }
+  // To add a new photo, copy any entry above and paste it here. Repeat as needed.
+];
 
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('in-view');
-        const num = e.target.dataset.frame;
-        if (num) current.textContent = num;
+/* === CAROUSEL ENGINE === */
+const carousel = document.getElementById('carousel');
+const captionEl = document.getElementById('caption');
+const captionTitle = document.getElementById('captionTitle');
+const captionMeta = document.getElementById('captionMeta');
+const counterCurrent = document.getElementById('counterCurrent');
+const counterTotal = document.getElementById('counterTotal');
+const navPrev = document.getElementById('navPrev');
+const navNext = document.getElementById('navNext');
+
+let currentIndex = 0;
+
+photos.forEach((p, i) => {
+  const item = document.createElement('div');
+  item.className = 'photo-item';
+  item.dataset.index = i;
+  item.innerHTML = `
+    <div class="photo-frame">
+      <img loading="lazy" alt="" data-src="${p.src}">
+      <div class="photo-glow"></div>
+    </div>
+  `;
+  item.addEventListener('click', () => onItemClick(i));
+  carousel.appendChild(item);
+});
+
+counterTotal.textContent = String(photos.length).padStart(2, '0');
+
+const COVER_FLOW = [
+  null,
+  { x: 52, scale: 0.78, opacity: 0.55, blur: 3 },
+  { x: 92, scale: 0.60, opacity: 0.25, blur: 6 },
+  { x: 128, scale: 0.48, opacity: 0.12, blur: 9 },
+  { x: 160, scale: 0.40, opacity: 0.06, blur: 12 }
+];
+const MAX_VISIBLE = COVER_FLOW.length - 1;
+
+function update() {
+  const items = carousel.children;
+  for (let i = 0; i < items.length; i++) {
+    const offset = i - currentIndex;
+    const abs = Math.abs(offset);
+    const sign = Math.sign(offset);
+    const item = items[i];
+    let x, scale, opacity, blur, z;
+
+    item.classList.toggle('is-center', offset === 0);
+
+    if (abs > MAX_VISIBLE) {
+      x = sign * 220; scale = 0.3; opacity = 0; blur = 18; z = 0;
+      item.style.pointerEvents = 'none';
+    } else if (offset === 0) {
+      x = 0; scale = 1; opacity = 1; blur = 0; z = 100;
+      item.style.pointerEvents = 'auto';
+    } else {
+      const c = COVER_FLOW[abs];
+      x = sign * c.x; scale = c.scale; opacity = c.opacity; blur = c.blur;
+      z = 100 - abs;
+      item.style.pointerEvents = 'auto';
+    }
+
+    item.style.transform = `translate(-50%, -50%) translateX(${x}%) scale(${scale})`;
+    item.style.opacity = opacity;
+    item.style.filter = `blur(${blur}px)`;
+    item.style.zIndex = z;
+
+    if (abs <= MAX_VISIBLE + 2) {
+      const img = item.querySelector('img');
+      if (img.dataset.src && !img.src) {
+        img.src = img.dataset.src;
+        img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
       }
-    });
-  }, { threshold: 0.4 });
-  frames.forEach(f => obs.observe(f));
-})();
+    }
+  }
+
+  captionEl.classList.add('fading');
+  setTimeout(() => {
+    const photo = photos[currentIndex];
+    captionTitle.textContent = photo.title || '';
+    captionMeta.textContent = photo.meta || '';
+    captionEl.classList.remove('fading');
+  }, 200);
+
+  counterCurrent.textContent = String(currentIndex + 1).padStart(2, '0');
+  navPrev.disabled = currentIndex === 0;
+  navNext.disabled = currentIndex === photos.length - 1;
+}
+
+function go(i) { if (i < 0 || i >= photos.length || i === currentIndex) return; currentIndex = i; update(); }
+function next() { go(currentIndex + 1); }
+function prev() { go(currentIndex - 1); }
+
+function onItemClick(i) {
+  if (i === currentIndex) openLightbox(i);
+  else go(i);
+}
+
+navPrev.addEventListener('click', prev);
+navNext.addEventListener('click', next);
+
+/* WHEEL */
+let wheelAccum = 0;
+let wheelLock = false;
+let wheelTimer = null;
+window.addEventListener('wheel', (e) => {
+  if (document.getElementById('lightbox').classList.contains('active')) return;
+  e.preventDefault();
+  if (wheelLock) return;
+  wheelAccum += e.deltaY;
+  if (wheelTimer) clearTimeout(wheelTimer);
+  if (Math.abs(wheelAccum) > 60) {
+    if (wheelAccum > 0) next(); else prev();
+    wheelAccum = 0;
+    wheelLock = true;
+    setTimeout(() => { wheelLock = false; }, 450);
+  }
+  wheelTimer = setTimeout(() => { wheelAccum = 0; }, 200);
+}, { passive: false });
+
+/* KEYBOARD */
+window.addEventListener('keydown', (e) => {
+  const lb = document.getElementById('lightbox');
+  if (lb.classList.contains('active')) {
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') lightboxPrev();
+    if (e.key === 'ArrowRight') lightboxNext();
+    return;
+  }
+  if (e.key === 'ArrowLeft') prev();
+  else if (e.key === 'ArrowRight') next();
+  else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(currentIndex); }
+  else if (e.key === 'Home') go(0);
+  else if (e.key === 'End') go(photos.length - 1);
+});
+
+/* TOUCH */
+let touchStartX = null;
+let touchStartY = null;
+window.addEventListener('touchstart', (e) => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+window.addEventListener('touchend', (e) => {
+  if (touchStartX === null) return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+    if (dx < 0) next(); else prev();
+  }
+  touchStartX = null; touchStartY = null;
+});
+
+/* LIGHTBOX */
+const lightbox = document.getElementById('lightbox');
+const lightboxImage = document.getElementById('lightboxImage');
+const lightboxTitle = document.getElementById('lightboxTitle');
+const lightboxMeta = document.getElementById('lightboxMeta');
+const lightboxDesc = document.getElementById('lightboxDesc');
+const lightboxNum = document.getElementById('lightboxNum');
+let lightboxIndex = 0;
+
+function openLightbox(i) {
+  lightboxIndex = i;
+  const p = photos[i];
+  lightboxImage.src = p.src;
+  lightboxImage.alt = p.title || '';
+  lightboxNum.textContent = String(i + 1).padStart(2, '0') + ' / ' + String(photos.length).padStart(2, '0');
+  lightboxTitle.textContent = p.title || '';
+  lightboxMeta.textContent = p.meta || '';
+  lightboxDesc.textContent = p.desc || '';
+  lightbox.classList.add('active');
+  lightbox.setAttribute('aria-hidden', 'false');
+}
+function closeLightbox() {
+  lightbox.classList.remove('active');
+  lightbox.setAttribute('aria-hidden', 'true');
+}
+function lightboxNext() {
+  if (lightboxIndex < photos.length - 1) {
+    lightboxIndex++; currentIndex = lightboxIndex; update(); openLightbox(lightboxIndex);
+  }
+}
+function lightboxPrev() {
+  if (lightboxIndex > 0) {
+    lightboxIndex--; currentIndex = lightboxIndex; update(); openLightbox(lightboxIndex);
+  }
+}
+document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+document.getElementById('lightboxBackdrop').addEventListener('click', closeLightbox);
+document.getElementById('lightboxPrev').addEventListener('click', lightboxPrev);
+document.getElementById('lightboxNext').addEventListener('click', lightboxNext);
+
+/* INIT */
+requestAnimationFrame(() => { setTimeout(update, 80); });
+window.addEventListener('resize', update);
 </script>
 
 </body>
