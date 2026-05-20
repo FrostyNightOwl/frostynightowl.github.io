@@ -127,12 +127,12 @@ body::after {
   width: clamp(280px, 32vw, 480px);
   height: clamp(380px, 64vh, 640px);
   transform: translate(-50%, -50%);
-  /* UPDATE: Removed 'filter' from transition and will-change */
   transition:
     transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.85s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
-  will-change: transform, opacity;
+  will-change: transform, opacity, filter;
   opacity: 0;
 }
 
@@ -145,8 +145,6 @@ body::after {
   box-shadow:
     0 30px 60px -20px rgba(0,0,0,0.85),
     0 0 0 1px rgba(255,255,255,0.06);
-  /* UPDATE: Added transition for the center glow */
-  transition: box-shadow 0.85s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .photo-item img {
@@ -601,38 +599,38 @@ body::after {
 const photos = [
   {
     src: 'images/alive.png',
-    tag: 'Nature',
-    title: 'Survive',
-    meta: 'Home · Kashmir · 2018',
-    desc: 'No Description Yet.'
+    tag: 'Street',
+    title: 'When the City Goes Quiet',
+    meta: 'Mumbai · Bandra · 2024',
+    desc: 'Around two in the morning, even Mumbai forgets to be loud. For a moment the city looks the way it must have looked before anyone arrived.'
   },
   {
     src: 'images/citylights.png',
-    tag: 'Moody',
-    title: 'Cozy',
-    meta: 'Gurez · Kashmir',
-    desc: 'No Description Yet.'
+    tag: 'Mood',
+    title: 'Monsoon, Through Glass',
+    meta: 'Mumbai · 2024',
+    desc: 'Some weeks the rain becomes the only thing that knows what it is doing.'
   },
   {
     src: 'images/escape.png',
-    tag: 'Nature',
-    title: 'Escape',
-    meta: 'Yusmarg · Kashmir',
-    desc: 'No Description Yet.'
+    tag: 'Street',
+    title: 'Alley, Just After Rain',
+    meta: 'South Bombay · 2024',
+    desc: 'The reflections were better than the street itself. Everything important was upside down.'
   },
   {
     src: 'images/rain.png',
-    tag: 'Rain',
-    title: 'Reflections',
-    meta: 'Sonamarg· Kashmir',
-    desc: 'No Description Yet.'
+    tag: 'Found',
+    title: 'A Person, A Threshold',
+    meta: 'Undated · Found Moment',
+    desc: 'Sometimes a stranger becomes the most honest thing in the frame, precisely because they did not know they were in it.'
   },
   {
     src: 'images/scenic.png',
-    tag: 'Kashmir',
-    title: 'Riverside',
-    meta: 'Pahalgham · Kashmir · 2017',
-    desc: 'No Description Yet.'
+    tag: 'Architecture',
+    title: 'Architecture of an Afternoon',
+    meta: 'Mumbai · Fort · 2024',
+    desc: 'Light arrived at the wall the way an old letter arrives. Slowly, and without explaining itself.'
   },
   {
     src: 'images/shades.png',
@@ -705,9 +703,9 @@ if (photos.length <= 20) {
 const COVER_FLOW = [
   null,
   { x: 48, scale: 0.86, opacity: 0.85, blur: 0 },
-  { x: 82, scale: 0.72, opacity: 0.45, blur: 0 },
-  { x: 112, scale: 0.6,  opacity: 0.18, blur: 0 },
-  { x: 140, scale: 0.5,  opacity: 0.06, blur: 0 }
+  { x: 82, scale: 0.72, opacity: 0.45, blur: 0.5 },
+  { x: 112, scale: 0.6,  opacity: 0.18, blur: 1.5 },
+  { x: 140, scale: 0.5,  opacity: 0.06, blur: 3 }
 ];
 const MAX_VISIBLE = COVER_FLOW.length - 1;
 
@@ -735,8 +733,7 @@ function update() {
       item.style.pointerEvents = 'auto';
     }
 
-       // UPDATE: Changed 'translate' to 'translate3d' to force GPU acceleration
-    item.style.transform = `translate3d(-50%, -50%, 0) translateX(${x}%) scale(${scale})`;
+    item.style.transform = `translate(-50%, -50%) translateX(${x}%) scale(${scale})`;
     item.style.opacity = opacity;
     item.style.filter = blur > 0 ? `blur(${blur}px)` : '';
     item.style.zIndex = z;
